@@ -146,7 +146,8 @@ The repository currently defines:
 - role definitions in `docs/roles/*.md`
 - AWS service mapping in `docs/aws-toolkit/service-mapping.md`
 - AI repository instructions in `.github/copilot-instructions.md`
-- prompt and instruction scaffolding in `.github/prompts/*` and `.github/instructions/*`
+- reusable prompts in `.github/prompts/*`
+- reusable instruction files in `.github/instructions/*`
 
 ---
 
@@ -298,6 +299,63 @@ The current objective is to establish:
 - AI-ready repository instructions and prompts
 
 Implementation templates, examples, and downstream engineering accelerators can be added later without weakening the architecture system defined here.
+
+---
+
+## Using Codex and Copilot in This Repository
+
+A new engineer should be able to open this repository in VS Code and know where the architecture rules live, which AI guidance files to use, and how to start the most common task types.
+
+### Read this context first
+
+Start every meaningful task by reading:
+
+1. `README.md`
+2. `.github/copilot-instructions.md`
+3. `docs/architecture-glossary.md`
+4. `docs/architecture/hub-spoke-overview.md`
+5. the relevant files in `docs/architecture/`, `docs/environments/`, `docs/roles/`, or `docs/aws-toolkit/`
+
+### Repository AI guidance files
+
+Use these files as the default guidance layer for Copilot and Codex:
+
+- `.github/copilot-instructions.md` for repository-wide rules
+- `.github/instructions/architecture.instructions.md` for architecture and design work
+- `.github/instructions/aws.instructions.md` for AWS service and service-mapping work
+- `.github/instructions/terraform.instructions.md` for Terraform work
+- `.github/instructions/pyspark.instructions.md` for PySpark work
+- `.github/instructions/dbt.instructions.md` for dbt work
+- `.github/instructions/qa.instructions.md` for QA and validation work
+
+### Reusable prompt entry points
+
+Use these prompt files to start the main artifact families covered in this phase:
+
+- `.github/prompts/design-hub-spoke.prompt.md` for architecture design and architecture-aligned documentation
+- `.github/prompts/create-glue-job.prompt.md` for AWS Glue job design or implementation artifacts
+- `.github/prompts/create-dbt-model.prompt.md` for dbt models and dbt-oriented transformation guidance
+- `.github/prompts/create-stepfunction.prompt.md` for Step Functions workflow design or implementation artifacts
+- `.github/prompts/review-terraform.prompt.md` for Terraform review work
+- `.github/prompts/qa-data-pipeline.prompt.md` for QA review, validation planning, and data-pipeline quality assessment
+
+### Practical working rule
+
+When using Copilot or Codex in this repository:
+
+- identify the architecture component first: `ISC`, `DP-EH`, `DP-SP`, `DCS`, or `DDC`
+- identify the environment scope when relevant: `DIT`, `DEV`, `QA`, `PPRD`, or `PRD`
+- state the mandatory standards when they matter: IAM Roles only, Apache Iceberg from ISC onward, Redshift only for serving final Data Products
+- use the matching prompt for the task family
+- rely on the matching instruction file to keep the output consistent and opinionated
+
+### Phase completion signal
+
+For this phase, the repository now provides:
+
+- one reusable prompt for each major artifact family in scope
+- one instruction file for each major implementation family in scope
+- a clear VS Code onboarding path for using Codex and Copilot consistently in the repository
 
 ---
 
