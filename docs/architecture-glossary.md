@@ -21,7 +21,7 @@ This glossary does not define organization-specific operating models, confidenti
 ## Hub-and-Spoke Architecture
 
 Definition:
-A platform architecture model that separates shared enterprise capabilities from domain-aligned delivery capabilities while preserving common governance, metadata, security, and operational standards.
+A platform architecture model that separates shared enterprise capabilities from domain-aligned delivery capabilities while preserving common governance, Metadata, security, and operational standards.
 
 Context in This Repository:
 This repository uses Hub-and-Spoke Architecture as its primary platform model. The hub-side responsibilities are primarily represented by DCS, DP-EH, and governed aspects of DDC. The spoke-side responsibilities are represented by DP-SP. ISC and DDC connect ingestion and distribution to the broader platform.
@@ -84,7 +84,7 @@ Relationships:
 It connects to DP-SP, Data Product, Distributed Processing, Data Contract, and Centralized Processing when domain assets must interoperate with shared enterprise capabilities.
 
 Constraints (if applicable):
-In this repository, a Data Domain must not bypass shared governance, metadata, or distribution standards defined by DCS and DDC.
+In this repository, a Data Domain must not bypass shared governance, Metadata, or distribution standards defined by DCS and DDC.
 
 ## Centralized Processing
 
@@ -118,7 +118,7 @@ Relationships:
 It connects directly to DP-SP, Data Domain, Data Product, Centralized Processing, DDC, and Hub-and-Spoke Architecture.
 
 Constraints (if applicable):
-Distributed Processing must operate within shared governance, metadata, security, and distribution boundaries. It is not a license to duplicate core platform services.
+Distributed Processing must operate within shared governance, Metadata, security, and distribution boundaries. It is not a license to duplicate core platform services.
 
 ## Data Distribution
 
@@ -191,7 +191,7 @@ DP-SP does not use QA in this repository’s environment model. It must also avo
 ## DCS (Data Core Services)
 
 Definition:
-The shared foundational service layer that provides control, governance, metadata, access, and operational capabilities for the rest of the platform.
+The shared foundational service layer that provides control, governance, Metadata, access, and operational capabilities for the rest of the platform.
 
 Context in This Repository:
 DCS is the backbone of the platform. It enables consistency across ISC, DP-EH, DP-SP, and DDC.
@@ -228,7 +228,7 @@ Definition:
 The act of acquiring data from upstream sources and moving it into the platform under controlled technical and governance conditions.
 
 Context in This Repository:
-Ingestion is primarily handled by ISC and supported by DCS capabilities such as metadata, access, and observability.
+Ingestion is primarily handled by ISC and supported by DCS capabilities such as Metadata, access, and observability.
 
 Responsibilities / Role:
 Ingestion is responsible for controlled source onboarding, initial platform entry, and handoff into downstream platform flows.
@@ -299,7 +299,7 @@ Context in This Repository:
 Data Governance is embedded through DCS and influences every other component, especially ingestion, transformation, and distribution.
 
 Responsibilities / Role:
-It is responsible for enforcing consistent standards around access, metadata, quality expectations, traceability, and controlled use of data assets.
+It is responsible for enforcing consistent standards around access, Metadata, quality expectations, traceability, and controlled use of data assets.
 
 Relationships:
 It connects to DCS, Metadata, Data Quality, Data Contract, Data Lineage, Control Plane, and all architecture components.
@@ -347,7 +347,7 @@ Definition:
 The set of shared services and controls used to govern, manage, configure, and observe the platform rather than to process business data itself.
 
 Context in This Repository:
-The Control Plane is primarily associated with DCS and includes governance, metadata, access-control, and operational oversight capabilities.
+The Control Plane is primarily associated with DCS and includes governance, Metadata, access-control, and operational oversight capabilities.
 
 Responsibilities / Role:
 It is responsible for enabling consistent platform governance, management, and coordination across components.
