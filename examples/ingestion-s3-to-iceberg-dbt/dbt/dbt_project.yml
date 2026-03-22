@@ -1,0 +1,27 @@
+# License: Apache 2.0
+# Author: Manuel Hernandez Giuliani
+# Date Created: 2026-03-22
+# Date Modified: 2026-03-22
+# Purpose: Minimal dbt project starter for the ingestion-s3-to-iceberg-dbt example covering DP-EH Bronze, Silver, and Gold transformations.
+# Architecture component: DP-EH - Data Processing Center - Enterprise Hub
+
+name: "ingestion_s3_to_iceberg_dbt"
+version: "1.0.0"
+config-version: 2
+
+profile: "ingestion_s3_to_iceberg_dbt"
+
+model-paths: ["models"]
+
+models:
+  ingestion_s3_to_iceberg_dbt:
+    +materialized: view
+    staging:
+      +schema: bronze
+      +tags: ["bronze", "staging"]
+    intermediate:
+      +schema: silver
+      +tags: ["silver", "intermediate"]
+    curated:
+      +schema: gold
+      +tags: ["gold", "curated"]
