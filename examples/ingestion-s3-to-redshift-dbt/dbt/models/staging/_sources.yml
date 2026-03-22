@@ -1,0 +1,15 @@
+# License: Apache 2.0
+# Author: Manuel Hernandez Giuliani
+# Date Created: 2026-03-22
+# Date Modified: 2026-03-22
+# Purpose: Bronze-aligned source definition starter for the ingestion-s3-to-redshift-dbt example.
+# Architecture component: DP-EH - Data Processing Center - Enterprise Hub
+
+version: 2
+
+sources:
+  - name: bronze_landing
+    description: Bronze-aligned source relation derived from the ISC Landing Zone and standardized in Apache Iceberg.
+    tables:
+      - name: orders_bronze
+        description: Placeholder Bronze table for the example.
