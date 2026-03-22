@@ -77,17 +77,26 @@ Athena and Iceberg standard:
 
 Amazon Redshift usage depends on component role.
 
+Producer and consumer Redshift patterns do not change architecture ownership boundaries:
+
+- data remains owned in its origin component, such as ISC, DP-EH, or DP-SP
+- governed sharing should be managed through DCS-aligned controls, with AWS Lake Formation as the standard shared-governance mechanism where applicable
+- final consumer-facing serving through Redshift belongs in DDC, not in the producing processing component
+
 For DP-EH and DP-SP:
 
 - Redshift may be used as producer clusters.
 - Producer clusters may be none, one, or many.
-- The decision depends on hub or spoke strategy and on whether serving-optimized Data Product structures are needed close to the producing component.
+- The decision depends on hub or spoke strategy and on whether producer-side structures are needed before governed sharing.
+- Producer clusters do not replace DDC as the controlled Data Distribution layer.
+- Producer clusters should be treated as source-serving structures that share governed data outward rather than as the final consumer-serving layer.
 
 For DDC:
 
 - Redshift is used as consumer clusters.
 - Consumer clusters may be one or many.
 - The decision depends on Distribution and consumption strategy, especially where read performance and consumer-facing query optimization are required.
+- Where producer and consumer Redshift patterns coexist, the DDC consumer cluster is the final serving layer and should receive governed shared access from producer-side assets through AWS Lake Formation-aligned sharing controls.
 
 This pattern does not change the core rule that Redshift is not the primary platform for massive-scale processing.
 
@@ -288,13 +297,14 @@ Why they fit:
 - DP-EH is the primary enterprise-scale processing zone for massive volumes of data.
 - Spark, Glue, and dbt are the preferred processing standards for large-scale Transformation and industrialized data workflows.
 - S3 plus Iceberg provides the storage and table foundation for shared enterprise processing.
-- Redshift may be used as a producer cluster when serving-oriented structures are required, but not as the main heavy-processing engine.
+- Redshift may be used as a producer cluster when producer-side serving structures are required before governed sharing, but not as the main heavy-processing engine and not as a substitute for DDC consumer serving.
 - SageMaker Unified Studio fits exploration, feature engineering, ML experimentation, and model development in the hub.
 
 Boundaries:
 
 - DP-EH is not the primary consumer-facing Distribution layer.
 - DP-EH should not rely on Redshift as the default massive-scale processing engine.
+- DP-EH should not treat producer-side Redshift structures as the final consumer-serving layer.
 - DP-EH should not produce non-Iceberg default tables from shared processing flows.
 - DP-EH should not duplicate DCS governance responsibilities.
 
@@ -334,13 +344,14 @@ Why they fit:
 - DP-SP may use the same industrialized frameworks as DP-EH when a spoke needs scalable engineering depth.
 - DP-SP may also use lighter visual tooling such as Glue Studio where that better matches spoke autonomy and local delivery needs, provided the resulting data still conforms to the mandatory Apache Iceberg standard.
 - S3 plus Iceberg remains the mandatory storage and table standard.
-- Redshift may be used as a producer cluster when spoke strategy requires serving-oriented structures, but it is not the default engine for heavy batch processing.
+- Redshift may be used as a producer cluster when spoke strategy requires producer-side serving structures before governed sharing, but it is not the default engine for heavy batch processing and not the final consumer-serving layer.
 - SageMaker Unified Studio fits spoke-side exploration, feature engineering, ML experimentation, and model development.
 
 Boundaries:
 
 - DP-SP is not the place to duplicate shared Control Plane services.
 - DP-SP should not bypass DCS governance or DDC distribution principles.
+- DP-SP should not treat producer-side Redshift structures as the final consumer-serving layer.
 - DP-SP should not treat visual tools as an excuse to abandon Iceberg standardization.
 - DP-SP does not use QA in the environment model, so validation patterns must be designed accordingly.
 
@@ -416,6 +427,7 @@ Why they fit:
 - Iceberg remains the standard table format for distributed assets.
 - Athena is a valid serverless consumption engine over Iceberg datasets when flexible serverless access is sufficient.
 - Redshift is a valid consumer-cluster serving layer where high-performance structured consumption, BI workloads, query performance, and read optimization justify it.
+- Where producer and consumer Redshift patterns coexist, DDC is the place where consumer-serving Redshift access should be exposed.
 - SageMaker Unified Studio fits discovery, profiling, catalog exploration, and subscription workflows in DDC, but not processing.
 
 Boundaries:
@@ -439,6 +451,7 @@ Boundaries:
 
 - Lake Formation supports governed data access and policy enforcement.
 - It should be treated as a DCS-governed service that reinforces controlled access to Iceberg-backed data assets.
+- It is also the standard governance mechanism for sharing data outward from origin components toward DDC consumer-serving patterns where applicable.
 
 ### AWS Secrets Manager
 
@@ -529,6 +542,7 @@ Across all environments:
 - Athena is appropriate when the Data Product does not justify a dedicated cluster or when serverless access is sufficient for the consumption pattern.
 - Redshift is a strong fit for high-performance structured consumption, BI workloads, final serving structures, and curated delivery patterns that need read optimization.
 - Redshift should be positioned as a serving and consumption optimization layer, not as a processing engine and not as the main engine for heavy large-scale data processing.
+- If producer-side Redshift structures exist in DP-EH or DP-SP, they should feed governed sharing patterns rather than replace DDC as the final consumer-serving layer.
 
 ### When to Avoid Amazon Redshift
 
