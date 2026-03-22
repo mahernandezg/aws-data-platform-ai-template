@@ -56,12 +56,13 @@ This standard exists to provide a consistent governed table model with ACID beha
 
 Data Products may be consumed through two primary patterns in DDC:
 
-- Amazon Redshift as a serving and read-performance optimization layer
+- Amazon Redshift as a serving and read-performance optimization layer for high-performance structured consumption and BI-oriented workloads
 - Amazon S3 plus Apache Iceberg plus Amazon Athena as a serverless consumption pattern
 
 Redshift standard:
 
 - Amazon Redshift is used only to store and serve final Data Products.
+- Amazon Redshift is not a processing engine for the Data Platform.
 - Amazon Redshift is not the default engine for massive-scale Transformation or heavy batch processing.
 - Redshift usage is limited to databases, schemas, tables, views, materialized views, and optimizations that improve read performance.
 
@@ -69,7 +70,7 @@ Athena and Iceberg standard:
 
 - Not all Data Products require Amazon Redshift.
 - Amazon S3 plus Apache Iceberg plus Amazon Athena is a valid consumption pattern in DDC.
-- This applies when a hub or spoke does not provision a Redshift cluster or when serverless analytics is the better fit.
+- This applies when a hub or spoke does not provision a Redshift cluster, when the Data Product does not justify a dedicated cluster, or when serverless analytics is the better fit.
 - Iceberg remains the standard format even when Athena is the consumption engine.
 
 ### Amazon Redshift Deployment Pattern
@@ -415,15 +416,16 @@ Why they fit:
 - DDC needs governed exposure of Data Products and controlled downstream access.
 - S3 is the storage foundation for exposed Data Products.
 - Iceberg remains the standard table format for distributed assets.
-- Athena is a valid serverless consumption engine over Iceberg datasets.
-- Redshift is a valid consumer-cluster serving layer where query performance and read optimization justify it.
-- SageMaker Unified Studio fits discovery, profiling, catalog exploration, and subscription workflows in DDC.
+- Athena is a valid serverless consumption engine over Iceberg datasets when flexible serverless access is sufficient.
+- Redshift is a valid consumer-cluster serving layer where high-performance structured consumption, BI workloads, query performance, and read optimization justify it.
+- SageMaker Unified Studio fits discovery, profiling, catalog exploration, and subscription workflows in DDC, but not processing.
 
 Boundaries:
 
 - DDC is not the primary large-scale processing layer.
 - DDC must not use SageMaker Unified Studio for Data Product generation or large-scale Transformation.
-- DDC should not position Redshift as the default processing engine.
+- DDC supports both Redshift consumer clusters and S3 plus Iceberg plus Athena serverless consumption patterns.
+- DDC should not position Redshift as a processing engine or as the default processing engine.
 - DDC should not expose consumer-facing assets outside role-based access and shared governance controls.
 
 ## Cross-Cutting Core Services Mapping
@@ -525,9 +527,17 @@ Across all environments:
 
 ### Amazon Athena vs Amazon Redshift
 
-- Athena is a strong fit for serverless analytics over S3 and Iceberg-backed Data Products.
-- Redshift is a strong fit for final serving structures, read optimization, consumer-facing query performance, and curated delivery patterns.
-- Redshift should be positioned as a serving and consumption optimization layer, not as the main engine for heavy large-scale data processing.
+- Athena is a strong fit for flexible, serverless consumption over S3 and Iceberg-backed Data Products.
+- Athena is appropriate when the Data Product does not justify a dedicated cluster or when serverless access is sufficient for the consumption pattern.
+- Redshift is a strong fit for high-performance structured consumption, BI workloads, final serving structures, and curated delivery patterns that need read optimization.
+- Redshift should be positioned as a serving and consumption optimization layer, not as a processing engine and not as the main engine for heavy large-scale data processing.
+
+### When to Avoid Amazon Redshift
+
+- Avoid Redshift when the Data Product does not justify a dedicated cluster.
+- Avoid Redshift when S3 plus Iceberg plus Athena provides sufficient serverless access for the expected consumers.
+- Avoid Redshift when the workload is primarily large-scale Transformation or batch processing rather than final serving and consumption.
+- Avoid Redshift when the architecture needs flexible governed consumption over Iceberg datasets without cluster management overhead.
 
 ### Apache Iceberg Advantages
 
@@ -549,12 +559,19 @@ These advantages are why Iceberg is mandatory from ISC onward.
 
 - DP-EH should favor scalable industrialized processing patterns.
 - Spark, Glue, and dbt are the primary preferred frameworks for enterprise-scale processing.
+- Redshift should not replace Spark, Glue, or dbt for large-scale Transformation in DP-EH.
 
 ### DP-SP Processing Flexibility
 
 - DP-SP may choose industrialized processing similar to DP-EH when domain scale requires it.
 - DP-SP may also choose lighter visual or no-code patterns such as Glue Studio and DataBrew when autonomy, speed, and local delivery needs justify them.
 - This flexibility does not change the requirement to standardize landed and processed data in Apache Iceberg.
+
+### SageMaker Unified Studio Guidance
+
+- In DP-EH and DP-SP, SageMaker Unified Studio is appropriate for ML and advanced analytics workflows, including data exploration, feature engineering, experimentation, and model development.
+- In DDC, SageMaker Unified Studio is limited to discovery and interaction activities such as catalog exploration, data profiling, data discovery, and subscription workflows.
+- In DDC, SageMaker Unified Studio must not be used for Data Product generation, large-scale Transformation, or other processing responsibilities that belong to DP-EH or DP-SP.
 
 ## What This Mapping Is NOT
 
