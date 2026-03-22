@@ -1,0 +1,221 @@
+# License: Apache 2.0
+# Author: Manuel Hernandez Giuliani
+# Date Created: 2026-03-22
+# Date Modified: 2026-03-22
+# Purpose: Machine-readable environment model for the aws-data-platform-ai-template repository.
+
+schema_version: 1
+
+repository:
+  name: aws-data-platform-ai-template
+  type: public-enterprise-architecture-template
+
+environment_model:
+  ordered_lifecycle:
+    - dit
+    - dev
+    - qa
+    - pprd
+    - prd
+
+  controlled_environments:
+    - dev
+    - qa
+    - pprd
+    - prd
+
+  shared_experimentation_environment:
+    - dit
+
+mandatory_platform_standards:
+  iam:
+    access_model: iam_roles_only
+    iam_users_allowed: false
+  data_format:
+    standard_otf: apache_iceberg
+    mandatory_from: isc
+  medallion:
+    mandatory: true
+  redshift:
+    serving_only: true
+    processing_engine: false
+
+components:
+  isc:
+    name: ISC
+    full_name: Ingestion Service Center
+    applicable_environments:
+      - dit
+      - dev
+      - qa
+      - pprd
+      - prd
+    controlled_environment_accounts:
+      dev: isc-dev
+      qa: isc-qa
+      pprd: isc-pprd
+      prd: isc-prd
+    shared_environment_access:
+      dit:
+        shared_accounts:
+          - dit-1
+          - dit-2
+          - dit-3
+          - dit-4
+
+  dp_eh:
+    name: DP-EH
+    full_name: Data Processing Center - Enterprise Hub
+    applicable_environments:
+      - dit
+      - dev
+      - qa
+      - pprd
+      - prd
+    controlled_environment_accounts:
+      dev: dp-eh-dev
+      qa: dp-eh-qa
+      pprd: dp-eh-pprd
+      prd: dp-eh-prd
+    shared_environment_access:
+      dit:
+        shared_accounts:
+          - dit-1
+          - dit-2
+          - dit-3
+          - dit-4
+
+  dp_sp:
+    name: DP-SP
+    full_name: Data Processing Center - Spoke
+    applicable_environments:
+      - dit
+      - dev
+      - pprd
+      - prd
+    controlled_environment_accounts:
+      dev: dp-sp-dev
+      pprd: dp-sp-pprd
+      prd: dp-sp-prd
+    excluded_environments:
+      - qa
+    shared_environment_access:
+      dit:
+        shared_accounts:
+          - dit-1
+          - dit-2
+          - dit-3
+          - dit-4
+
+  dcs:
+    name: DCS
+    full_name: Data Core Services
+    applicable_environments:
+      - dit
+      - dev
+      - qa
+      - pprd
+      - prd
+    account_model:
+      type: cross_cutting_control_plane
+      note: DCS operates across isolated component-owned controlled-environment accounts rather than as its own explicitly enumerated account family.
+    shared_environment_access:
+      dit:
+        shared_accounts:
+          - dit-1
+          - dit-2
+          - dit-3
+          - dit-4
+
+  ddc:
+    name: DDC
+    full_name: Data Distribution Center
+    applicable_environments:
+      - dit
+      - dev
+      - qa
+      - pprd
+      - prd
+    controlled_environment_accounts:
+      dev: ddc-dev
+      qa: ddc-qa
+      pprd: ddc-pprd
+      prd: ddc-prd
+    shared_environment_access:
+      dit:
+        shared_accounts:
+          - dit-1
+          - dit-2
+          - dit-3
+          - dit-4
+
+environments:
+  dit:
+    name: DIT
+    display_name: Sandbox
+    type: shared_experimentation
+    promotion_target:
+      - dev
+    isolated_by_component_owned_account: false
+    shared_accounts:
+      - dit-1
+      - dit-2
+      - dit-3
+      - dit-4
+    regions:
+      - eu-west-1
+    notes:
+      - Shared experimentation only.
+      - Not a controlled multi-region environment.
+      - Not component-owned.
+
+  dev:
+    name: DEV
+    display_name: Development
+    type: controlled
+    promotion_target:
+      - qa
+      - pprd
+    isolated_by_component_owned_account: true
+    regions:
+      - us-east-1
+      - eu-west-1
+
+  qa:
+    name: QA
+    display_name: Quality Assurance
+    type: controlled
+    promotion_target:
+      - pprd
+    isolated_by_component_owned_account: true
+    regions:
+      - us-east-1
+      - eu-west-1
+    component_scope:
+      included:
+        - isc
+        - dp_eh
+        - dcs
+        - ddc
+      excluded:
+        - dp_sp
+
+  pprd:
+    name: PPRD
+    display_name: Pre Production
+    type: controlled
+    promotion_target:
+      - prd
+    isolated_by_component_owned_account: true
+    regions:
+      - us-east-1
+      - eu-west-1
+
+  prd:
+    name: PRD
+    display_name: Production
+    type: controlled
+    isolated_by_component_owned_account: true
+    regions:
+      - us-east-1
+      - eu-west-1
