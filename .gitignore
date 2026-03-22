@@ -1,0 +1,122 @@
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+.idea/
+*.swp
+*.swo
+*~
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+site/
+.eggs/
+*.egg
+*.egg-info/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# =========================
+# Terraform
+# =========================
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
+
+# Terraform variable files with secrets
+*.auto.tfvars
+*.auto.tfvars.json
+terraform.tfvars
+terraform.tfvars.json
+
+# =========================
+# dbt
+# =========================
+dbt_packages/
+target/
+logs/
+profiles.yml
+
+# =========================
+# Spark / Data / Generated outputs
+# =========================
+spark-warehouse/
+metastore_db/
+derby.log
+
+*.parquet
+*.crc
+
+tmp/
+temp/
+.cache/
+
+# =========================
+# AWS / Local credentials
+# =========================
+.aws/
+.env
+.env.*
+!.env.example
+
+# =========================
+# Testing / Reports
+# =========================
+test-reports/
+reports/
+coverage.xml
+junit.xml
+
+# =========================
+# Node (in case prompts/tools evolve)
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+# =========================
+# Project-specific local artifacts
+# =========================
+local/
+scratch/
+output/
+artifacts/
