@@ -319,6 +319,6 @@ If this repository is later adopted inside an enterprise, organization-specific 
 
 ## Author
 
-Created and maintained by Manuel Hernandez Giuliani.
+Created and maintained by Manuel Hernández Giuliani.
 
 This repository represents a public engineering foundation for AWS Data Platform Architecture and AI-assisted development workflows.
