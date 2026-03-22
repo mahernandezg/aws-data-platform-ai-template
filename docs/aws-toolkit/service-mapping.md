@@ -148,7 +148,6 @@ Typical services:
 - DBT
 - Amazon EMR
 - AWS Glue Studio
-- AWS Glue DataBrew
 
 ### Storage
 
@@ -322,7 +321,6 @@ Recommended services:
 - AWS Glue
 - DBT
 - AWS Glue Studio
-- AWS Glue DataBrew
 - AWS Step Functions
 - Amazon S3
 - Apache Iceberg
@@ -334,7 +332,7 @@ Recommended services:
 Why they fit:
 
 - DP-SP may use the same industrialized frameworks as DP-EH when a spoke needs scalable engineering depth.
-- DP-SP may also use lighter visual processing tools such as Glue Studio and DataBrew where that better matches spoke autonomy and local delivery needs.
+- DP-SP may also use lighter visual tooling such as Glue Studio where that better matches spoke autonomy and local delivery needs, provided the resulting data still conforms to the mandatory Apache Iceberg standard.
 - S3 plus Iceberg remains the mandatory storage and table standard.
 - Redshift may be used as a producer cluster when spoke strategy requires serving-oriented structures, but it is not the default engine for heavy batch processing.
 - SageMaker Unified Studio fits spoke-side exploration, feature engineering, ML experimentation, and model development.
@@ -564,7 +562,7 @@ These advantages are why Iceberg is mandatory from ISC onward.
 ### DP-SP Processing Flexibility
 
 - DP-SP may choose industrialized processing similar to DP-EH when domain scale requires it.
-- DP-SP may also choose lighter visual or no-code patterns such as Glue Studio and DataBrew when autonomy, speed, and local delivery needs justify them.
+- DP-SP may also choose lighter visual patterns such as Glue Studio when autonomy, speed, and local delivery needs justify them, but those patterns must still produce Apache Iceberg-standardized outputs.
 - This flexibility does not change the requirement to standardize landed and processed data in Apache Iceberg.
 
 ### SageMaker Unified Studio Guidance
