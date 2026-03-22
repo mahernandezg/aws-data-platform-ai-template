@@ -134,6 +134,7 @@ Typical services:
 - Amazon SQS
 - Amazon EventBridge
 - AWS Lambda
+- AWS Database Migration Service (AWS DMS)
 
 ### Processing
 
@@ -232,6 +233,7 @@ Recommended services:
 - AWS Step Functions
 - AWS Glue Data Catalog
 - AWS Glue Data Quality
+- AWS Database Migration Service (AWS DMS)
 
 Why they fit:
 
