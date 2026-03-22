@@ -1,0 +1,350 @@
+# License: Apache 2.0
+# Author: Manuel Hernandez Giuliani
+# Date Created: 2026-03-22
+# Date Modified: 2026-03-22
+# Purpose: Machine-readable service fit catalog for the aws-data-platform-ai-template repository.
+
+schema_version: 1
+
+mandatory_platform_standards:
+  iam:
+    access_model: iam_roles_only
+    iam_users_allowed: false
+  data_format:
+    standard_otf: apache_iceberg
+    mandatory_from_component: isc
+  redshift:
+    serving_only: true
+    allowed_objects:
+      - database
+      - schema
+      - table
+      - view
+      - materialized_view
+    prohibited_primary_roles:
+      - large_scale_processing
+      - default_transformation_engine
+  medallion:
+    mandatory: true
+    ownership:
+      isc:
+        - landing_zone
+      dp_eh:
+        - bronze
+        - silver
+        - gold
+      dp_sp:
+        - bronze
+        - silver
+        - constrained_gold
+      ddc:
+        - gold_exposure_only
+
+service_categories:
+  ingestion:
+    description: Services used for source acquisition and governed entry into the platform.
+    medallion_alignment:
+      - landing_zone
+  processing:
+    description: Services used for Bronze, Silver, and Gold transformation outside consumer-serving engines.
+    medallion_alignment:
+      - bronze
+      - silver
+      - gold
+  storage:
+    description: Storage and table services used across Landing Zone and Medallion layers.
+    medallion_alignment:
+      - landing_zone
+      - bronze
+      - silver
+      - gold
+  metadata_and_governance:
+    description: Shared catalog, data quality, and governance services.
+  orchestration:
+    description: Workflow and event-driven coordination services.
+  observability:
+    description: Shared monitoring, logging, tracing, and audit services.
+  security:
+    description: Shared access, secret management, and security control services.
+  analytics_and_consumption:
+    description: Services used for consumer-facing Gold access and serving.
+    medallion_alignment:
+      - gold_exposure
+      - ai_exception_access
+  ai_services:
+    description: Services used for AI, ML, discovery, and advanced analytics within allowed boundaries.
+
+services:
+  amazon_s3:
+    category: storage
+    fit_by_component:
+      isc: primary
+      dp_eh: primary
+      dp_sp: primary
+      ddc: primary
+    medallion_fit:
+      - landing_zone
+      - bronze
+      - silver
+      - gold
+    notes:
+      - Storage foundation for landed and distributed datasets.
+
+  apache_iceberg:
+    category: storage
+    fit_by_component:
+      isc: mandatory_from_handoff
+      dp_eh: mandatory
+      dp_sp: mandatory
+      ddc: mandatory_for_s3_athena_pattern
+    medallion_fit:
+      - bronze
+      - silver
+      - gold
+    notes:
+      - Standard Open Table Format from ISC onward.
+
+  aws_glue:
+    category: processing
+    fit_by_component:
+      isc: recommended
+      dp_eh: recommended
+      dp_sp: recommended
+    notes:
+      - Supports ingestion and industrialized processing.
+
+  aws_glue_crawler:
+    category: ingestion
+    fit_by_component:
+      isc: recommended
+    notes:
+      - Supports schema discovery and metadata alignment at ingestion boundaries.
+
+  aws_glue_api:
+    category: ingestion
+    fit_by_component:
+      isc: recommended
+    notes:
+      - Supports programmable ingestion and metadata interactions.
+
+  aws_glue_data_catalog:
+    category: metadata_and_governance
+    fit_by_component:
+      isc: recommended
+      dp_eh: recommended
+      dp_sp: recommended
+      ddc: recommended
+      dcs: recommended
+
+  aws_glue_data_quality:
+    category: metadata_and_governance
+    fit_by_component:
+      isc: recommended
+      dp_eh: recommended
+      dp_sp: recommended
+
+  aws_glue_studio:
+    category: processing
+    fit_by_component:
+      dp_sp: conditional
+    notes:
+      - Allowed in DP-SP where lighter visual delivery patterns still produce Iceberg-standardized outputs.
+
+  amazon_emr:
+    category: processing
+    fit_by_component:
+      dp_eh: recommended
+      dp_sp: conditional
+    notes:
+      - Use when Spark workload control or tuning requires more flexibility than Glue.
+
+  apache_spark:
+    category: processing
+    fit_by_component:
+      dp_eh: preferred
+      dp_sp: recommended
+
+  pyspark:
+    category: processing
+    fit_by_component:
+      dp_eh: preferred
+      dp_sp: recommended
+
+  sparksql:
+    category: processing
+    fit_by_component:
+      dp_eh: recommended
+      dp_sp: recommended
+
+  dbt:
+    category: processing
+    fit_by_component:
+      dp_eh: preferred
+      dp_sp: recommended
+
+  aws_step_functions:
+    category: orchestration
+    fit_by_component:
+      isc: recommended
+      dp_eh: recommended
+      dp_sp: recommended
+
+  apache_airflow:
+    category: orchestration
+    fit_by_component:
+      dp_eh: conditional
+    notes:
+      - Fit depends on DAG-oriented workflow needs and operating model.
+
+  amazon_eventbridge:
+    category: orchestration
+    fit_by_component:
+      isc: recommended
+      dcs: recommended
+
+  amazon_sqs:
+    category: ingestion
+    fit_by_component:
+      isc: recommended
+
+  amazon_msk:
+    category: ingestion
+    fit_by_component:
+      isc: conditional
+
+  aws_lambda:
+    category: ingestion
+    fit_by_component:
+      isc: recommended
+    notes:
+      - Fit for focused event-driven or utility execution, not hidden workflow orchestration.
+
+  aws_dms:
+    category: ingestion
+    fit_by_component:
+      isc: conditional
+
+  aws_iam:
+    category: security
+    fit_by_component:
+      dcs: mandatory
+    notes:
+      - IAM Roles only.
+
+  aws_lake_formation:
+    category: metadata_and_governance
+    fit_by_component:
+      dcs: mandatory_shared_governance
+      ddc: recommended
+    notes:
+      - Standard governed sharing mechanism where applicable.
+
+  aws_secrets_manager:
+    category: security
+    fit_by_component:
+      dcs: recommended
+
+  amazon_cloudwatch:
+    category: observability
+    fit_by_component:
+      dcs: recommended
+
+  aws_cloudtrail:
+    category: observability
+    fit_by_component:
+      dcs: recommended
+
+  dynatrace:
+    category: observability
+    fit_by_component:
+      dcs: conditional
+
+  amazon_athena:
+    category: analytics_and_consumption
+    fit_by_component:
+      ddc: recommended
+    notes:
+      - Valid serverless Gold consumption pattern over S3 plus Iceberg.
+
+  amazon_redshift:
+    category: analytics_and_consumption
+    fit_by_component:
+      dp_eh: producer_cluster_only
+      dp_sp: producer_cluster_only
+      ddc: consumer_serving_recommended
+    notes:
+      - Final serving layer only.
+      - Never the main large-scale processing engine.
+
+  jdbc_endpoints:
+    category: analytics_and_consumption
+    fit_by_component:
+      ddc: recommended
+
+  sagemaker_unified_studio:
+    category: ai_services
+    fit_by_component:
+      dp_eh: recommended
+      dp_sp: recommended
+      ddc: restricted
+    restrictions:
+      ddc_allowed_uses:
+        - catalog_exploration
+        - data_profiling
+        - data_discovery
+        - subscription_workflows
+      ddc_prohibited_uses:
+        - data_processing
+        - large_scale_transformation
+        - data_product_generation
+
+  amazon_bedrock:
+    category: ai_services
+    fit_by_component:
+      dcs: conditional
+      ddc: conditional
+
+  amazon_q:
+    category: ai_services
+    fit_by_component:
+      dcs: conditional
+
+component_preferences:
+  isc:
+    preferred_categories:
+      - ingestion
+      - storage
+      - orchestration
+      - metadata_and_governance
+      - observability
+  dp_eh:
+    preferred_categories:
+      - processing
+      - storage
+      - orchestration
+      - metadata_and_governance
+      - observability
+      - analytics_and_consumption
+      - ai_services
+  dp_sp:
+    preferred_categories:
+      - processing
+      - storage
+      - orchestration
+      - metadata_and_governance
+      - observability
+      - analytics_and_consumption
+      - ai_services
+  dcs:
+    preferred_categories:
+      - security
+      - metadata_and_governance
+      - observability
+      - orchestration
+  ddc:
+    preferred_categories:
+      - storage
+      - analytics_and_consumption
+      - metadata_and_governance
+      - observability
+      - ai_services

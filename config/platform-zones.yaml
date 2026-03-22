@@ -1,0 +1,237 @@
+# License: Apache 2.0
+# Author: Manuel Hernandez Giuliani
+# Date Created: 2026-03-22
+# Date Modified: 2026-03-22
+# Purpose: Machine-readable platform zone and responsibility model for the aws-data-platform-ai-template repository.
+
+schema_version: 1
+
+architecture_model:
+  name: hub-and-spoke
+  components:
+    - isc
+    - dp_eh
+    - dp_sp
+    - dcs
+    - ddc
+
+interaction_model:
+  directed_flows:
+    - from: isc
+      to: ddc
+      type: ingestion_to_distribution_handoff
+    - from: ddc
+      to: dp_eh
+      type: bidirectional_distribution_processing
+    - from: dp_eh
+      to: ddc
+      type: bidirectional_distribution_processing
+    - from: ddc
+      to: dp_sp
+      type: bidirectional_distribution_processing
+    - from: dp_sp
+      to: ddc
+      type: bidirectional_distribution_processing
+    - from: dcs
+      to: isc
+      type: control_plane_support
+    - from: dcs
+      to: dp_eh
+      type: control_plane_support
+    - from: dcs
+      to: dp_sp
+      type: control_plane_support
+    - from: dcs
+      to: ddc
+      type: control_plane_support
+
+platform_zones:
+  isc:
+    name: ISC
+    full_name: Ingestion Service Center
+    role: governed_platform_entry
+    mission:
+      - source connectivity
+      - ingestion orchestration
+      - raw landing-zone handoff
+      - ingestion metadata capture
+    medallion_ownership:
+      owned_layers:
+        - landing_zone
+      excluded_layers:
+        - bronze
+        - silver
+        - gold
+    boundaries:
+      allowed_responsibilities:
+        - ingestion
+        - landing_zone_management
+        - ingestion_quality_controls
+      prohibited_responsibilities:
+        - enterprise_transformation
+        - spoke_transformation
+        - consumer_facing_distribution
+    controlled_accounts_by_environment:
+      dev: isc-dev
+      qa: isc-qa
+      pprd: isc-pprd
+      prd: isc-prd
+    regions:
+      - us-east-1
+      - eu-west-1
+
+  dp_eh:
+    name: DP-EH
+    full_name: Data Processing Center - Enterprise Hub
+    role: centralized_processing
+    mission:
+      - enterprise bronze processing
+      - enterprise silver processing
+      - enterprise gold processing
+      - shared reusable transformation logic
+    medallion_ownership:
+      owned_layers:
+        - bronze
+        - silver
+        - gold
+      ownership_scope:
+        gold: enterprise_canonical_data_products
+    boundaries:
+      allowed_responsibilities:
+        - centralized_processing
+        - shared_transformation_logic
+        - enterprise_data_product_preparation
+      prohibited_responsibilities:
+        - consumer_facing_distribution
+        - dcs_control_plane_duplication
+    controlled_accounts_by_environment:
+      dev: dp-eh-dev
+      qa: dp-eh-qa
+      pprd: dp-eh-pprd
+      prd: dp-eh-prd
+    regions:
+      - us-east-1
+      - eu-west-1
+
+  dp_sp:
+    name: DP-SP
+    full_name: Data Processing Center - Spoke
+    role: distributed_processing
+    mission:
+      - spoke bronze processing
+      - spoke silver processing
+      - domain-specific gold outputs
+      - enhancements of dp-eh gold outputs where justified
+    medallion_ownership:
+      owned_layers:
+        - bronze
+        - silver
+        - gold
+      ownership_scope:
+        gold:
+          - domain_specific_data_products
+          - domain_specific_enhancements_of_dp_eh_gold
+      prohibited_gold_scope:
+        - enterprise_canonical_gold
+    boundaries:
+      allowed_responsibilities:
+        - domain_aligned_transformation
+        - spoke_data_product_preparation
+      prohibited_responsibilities:
+        - enterprise_canonical_gold_ownership
+        - dcs_control_plane_duplication
+        - ddc_distribution_ownership
+    controlled_accounts_by_environment:
+      dev: dp-sp-dev
+      pprd: dp-sp-pprd
+      prd: dp-sp-prd
+    excluded_environments:
+      - qa
+    regions:
+      - us-east-1
+      - eu-west-1
+
+  dcs:
+    name: DCS
+    full_name: Data Core Services
+    role: shared_control_plane
+    mission:
+      - identity_and_access_foundations
+      - metadata_and_catalog_services
+      - data_governance_controls
+      - shared_observability
+      - orchestration_foundations
+    medallion_ownership:
+      owned_layers: []
+      note: DCS governs and supports all layers but does not own business-data Medallion processing.
+    boundaries:
+      allowed_responsibilities:
+        - control_plane_services
+        - governance
+        - metadata
+        - observability
+      prohibited_responsibilities:
+        - business_data_processing
+        - consumer_serving
+    account_model:
+      type: cross_account_control_plane
+    regions:
+      - us-east-1
+      - eu-west-1
+      - eu-west-1-shared-dit-access
+
+  ddc:
+    name: DDC
+    full_name: Data Distribution Center
+    role: governed_distribution_and_consumption
+    mission:
+      - gold_data_product_exposure
+      - governed_consumer_access
+      - serving_interfaces
+      - downstream_distribution
+    medallion_ownership:
+      owned_layers: []
+      exposed_layers:
+        default:
+          - gold
+        controlled_exception_for_ai:
+          - bronze
+          - silver
+          - gold
+    boundaries:
+      allowed_responsibilities:
+        - data_distribution
+        - consumer_serving
+        - governed_access
+      prohibited_responsibilities:
+        - bronze_processing
+        - silver_processing
+        - gold_processing
+        - use_as_general_processing_layer
+    controlled_accounts_by_environment:
+      dev: ddc-dev
+      qa: ddc-qa
+      pprd: ddc-pprd
+      prd: ddc-prd
+    regions:
+      - us-east-1
+      - eu-west-1
+
+shared_dit_model:
+  account_count: 4
+  accounts:
+    - dit-1
+    - dit-2
+    - dit-3
+    - dit-4
+  region_scope:
+    - eu-west-1
+  usage:
+    type: shared_experimentation
+    component_owned: false
+    accessible_by:
+      - isc
+      - dp_eh
+      - dp_sp
+      - dcs
+      - ddc
