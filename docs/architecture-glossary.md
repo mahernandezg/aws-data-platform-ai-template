@@ -52,6 +52,74 @@ It contains all architecture components, all environment concepts, and all platf
 Constraints (if applicable):
 In this repository, the Data Platform must be documented as a reusable public template and must not assume confidential enterprise processes or internal-only operating models.
 
+## Landing Zone
+
+Definition:
+The initial platform entry layer where newly ingested source data is received before Medallion processing begins.
+
+Context in This Repository:
+In this repository, the Landing Zone belongs to ISC and is limited to raw data Ingestion behavior. It is the controlled point where source-aligned data first enters the Data Platform before Bronze standardization in DP-EH or DP-SP.
+
+Responsibilities / Role:
+It is responsible for receiving ingested source data, preserving source traceability, and supporting controlled handoff into downstream Medallion layers.
+
+Relationships:
+It connects directly to ISC, Ingestion, Metadata, Data Lineage, Bronze, DCS, and DDC.
+
+Constraints (if applicable):
+The Landing Zone is not a Medallion layer beyond platform entry. It must not be treated as a Transformation layer, a consumer-facing Distribution layer, or a substitute for Bronze standardization.
+
+## Bronze
+
+Definition:
+The first Medallion layer in which ingested data is standardized into platform-managed structures while remaining close to source meaning and source granularity.
+
+Context in This Repository:
+Bronze is implemented in DP-EH or DP-SP after data enters through ISC. In DP-EH, Bronze supports enterprise-standardized raw structures. In DP-SP, Bronze supports domain-specific ingestion and standardization within shared platform governance. Bronze data must align with the Apache Iceberg standard.
+
+Responsibilities / Role:
+It is responsible for converting ingested data into governed, standardized raw structures suitable for downstream processing while preserving source traceability.
+
+Relationships:
+It connects directly to Landing Zone, Silver, DP-EH, DP-SP, Apache Iceberg-standardized data structures, Metadata, Data Lineage, and Data Quality.
+
+Constraints (if applicable):
+Bronze is not the Landing Zone and not a consumer-facing layer. It must not be treated as an ungoverned raw file area, and it must remain standardized according to repository platform rules.
+
+## Silver
+
+Definition:
+The Medallion layer in which Bronze data is incrementally transformed into cleansed, structured, unified, and ACID-managed datasets suitable for reliable downstream modeling and reuse.
+
+Context in This Repository:
+In DP-EH, Silver represents enterprise-scale unified processing, including incremental processing and shared data structures such as SCD Type 2 patterns where relevant. In DP-SP, Silver represents domain-level Transformation within spoke ownership. Silver data must align with the Apache Iceberg standard.
+
+Responsibilities / Role:
+It is responsible for improving quality, consistency, structure, and reuse value beyond Bronze while preparing data for Gold Data Product modeling.
+
+Relationships:
+It connects directly to Bronze, Gold, DP-EH, DP-SP, Centralized Processing, Distributed Processing, Data Quality, Data Lineage, and Data Product preparation.
+
+Constraints (if applicable):
+Silver is not the consumer-serving layer. It must not be treated as final Distribution output, and its ownership must remain clear between enterprise-shared processing in DP-EH and domain-specific processing in DP-SP.
+
+## Gold
+
+Definition:
+The Medallion layer in which processed data is modeled into final Data Product structures intended for governed downstream use.
+
+Context in This Repository:
+In DP-EH, Gold represents enterprise Data Products, including star-schema modeling, dimension and fact structures, and SCD Type 2 patterns where relevant. In DP-SP, Gold is limited to domain-specific Data Products or domain-specific enhancements of DP-EH Gold Data Products. DDC exposes Gold Data Products to consumers and does not own Gold processing. AI-oriented access may use Bronze, Silver, or Gold only as a controlled exception.
+
+Responsibilities / Role:
+It is responsible for producing governed final Data Product structures ready for Distribution and consumption.
+
+Relationships:
+It connects directly to Silver, Data Product, DP-EH, DP-SP, DDC, Distribution, Data Contract, and consumer-serving patterns.
+
+Constraints (if applicable):
+Gold must not create ambiguity between enterprise-wide canonical Data Products in DP-EH and domain-specific Gold outputs in DP-SP. DDC may expose Gold assets but must not become the processing owner of Gold. In the default platform pattern, DDC exposes Gold only to consumers, with AI-oriented access to Bronze, Silver, or Gold treated as an explicit controlled exception.
+
 ## Data Product
 
 Definition:

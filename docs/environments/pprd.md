@@ -92,6 +92,7 @@ Expected controls in PPRD include:
 
 - explicit release-readiness scope
 - strong alignment with architecture component boundaries
+- strong alignment with Medallion layer ownership and DDC Gold exposure rules
 - controlled entry of changes and release candidates
 - clear Data Governance, Data Quality, Metadata, and Data Lineage expectations
 - traceable evidence of readiness assessment
@@ -164,6 +165,7 @@ PPRD is not:
 - the production environment itself
 - a place to accept unresolved architectural ambiguity
 - a casual staging area without strong governance and readiness discipline
+- a place to carry unresolved Medallion ownership ambiguity into PRD
 
 PPRD must remain the controlled production-like validation environment of the Data Platform, distinct from both earlier testing environments and PRD operational use.
 

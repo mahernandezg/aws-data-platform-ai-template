@@ -89,6 +89,7 @@ DEV requires clear architectural and engineering discipline.
 Expected controls in DEV include:
 
 - explicit alignment with architecture component responsibilities
+- explicit alignment with Medallion layer ownership where Landing Zone, Bronze, Silver, Gold, or DDC exposure behavior is involved
 - traceable engineering changes and environment ownership
 - stronger Metadata, Data Lineage, and Data Governance alignment than in DIT
 - reviewable workload behavior suitable for structured team collaboration
@@ -160,6 +161,7 @@ DEV is not:
 - a production-like readiness stage
 - a stable operational environment for downstream consumers
 - a place to bypass shared governance or architecture boundaries because work is still under development
+- a place to blur DP-EH Gold, DP-SP Gold, or DDC Gold exposure boundaries during implementation
 
 DEV must remain the active development and integration environment of the Data Platform, not a replacement for later validation stages.
 

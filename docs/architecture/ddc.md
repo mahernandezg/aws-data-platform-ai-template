@@ -6,6 +6,8 @@ DDC is the architecture component responsible for Data Distribution in the Data 
 
 It exists to expose data for downstream use in a governed, traceable, and usable form while preserving clear separation between internal processing concerns and consumer-facing access patterns. In this repository, DDC is the controlled distribution layer that receives governed outputs and makes them available for downstream consumption without collapsing Distribution into Ingestion, Transformation, or Control Plane responsibilities.
 
+Within the repository's Medallion Data Architecture, DDC exposes Gold Data Products to consumers. It does not own Landing Zone, Bronze, Silver, or Gold processing. AI-oriented access to Bronze, Silver, or Gold is allowed only as a controlled exception and must not change DDC into a processing layer.
+
 ## Responsibilities
 
 - Provide governed Data Distribution for downstream access and reuse.
@@ -16,6 +18,7 @@ It exists to expose data for downstream use in a governed, traceable, and usable
 - Integrate with DCS-supported access, governance, and Observability capabilities.
 - Receive governed outputs from DP-EH and DP-SP for downstream Distribution.
 - Participate in the repository interaction model as the governed downstream handoff target for ISC.
+- Expose Gold Data Products as the default consumer-facing Medallion layer.
 
 ## Scope and Boundaries
 
@@ -26,6 +29,8 @@ DDC includes:
 - consumer-facing distribution structures and interfaces
 - distribution-aligned Metadata and lineage continuity
 - distribution controls that preserve traceability and access discipline
+- governed Gold Data Product exposure to downstream consumers
+- controlled exception handling for AI-oriented access to Bronze, Silver, or Gold
 
 DDC does not include:
 
@@ -35,6 +40,7 @@ DDC does not include:
 - Control Plane ownership owned by DCS
 - unrestricted consumer access without governance controls
 - generic business-data processing responsibilities unrelated to Distribution
+- Landing Zone, Bronze, Silver, or Gold processing ownership
 
 ## Inbound Interactions
 
@@ -76,6 +82,7 @@ Within the Data Plane, DDC is responsible for:
 - making Data Products available through controlled Distribution paths
 - preserving traceability of how distributed assets are exposed and consumed
 - supporting the separation between platform-internal processing and downstream access
+- exposing Gold as the default consumer layer while keeping lower Medallion layers outside the default consumption pattern
 
 ### Control Plane Responsibilities
 
@@ -118,7 +125,7 @@ Typical AWS services aligned to DDC include:
 - Apache Iceberg
 - JDBC-based access patterns
 
-These services are indicative of common AWS-native or repository-aligned Distribution patterns and should be interpreted at architecture level rather than as a mandatory implementation list.
+These services are indicative of common AWS-native or repository-aligned Distribution patterns and should be interpreted at architecture level rather than as a mandatory implementation list. In Medallion terms, DDC exposes Gold Data Products to consumers by default, while any AI-oriented access to Bronze, Silver, or Gold remains a controlled exception.
 
 ## Governance and Security Considerations
 
@@ -153,6 +160,7 @@ DDC is not:
 - the platform Control Plane
 - an unrestricted consumer-access zone without governance boundaries
 - a generic place to store any output without clear Distribution intent
+- the owner of Bronze, Silver, or Gold Transformation logic
 
 DDC must remain the governed Data Distribution layer of the Data Platform and should not absorb responsibilities that belong to ISC, DP-EH, DP-SP, or DCS.
 

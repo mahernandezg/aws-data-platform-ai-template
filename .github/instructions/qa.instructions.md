@@ -41,6 +41,7 @@ QA outputs must explicitly enforce:
 - IAM Roles only
 - no IAM Users
 - Apache Iceberg as the standard Open Table Format from ISC onward
+- Landing Zone, Bronze, Silver, Gold, and DDC exposure ownership boundaries
 - Redshift serving-only positioning for final Data Products
 - DDC as a Distribution layer, not a processing layer
 - clear separation of ISC, DP-EH, DP-SP, DCS, and DDC responsibilities
@@ -77,5 +78,6 @@ Do not:
 - describe IAM Users as valid runtime identities
 - accept non-Iceberg default outputs from ISC onward
 - accept Redshift-centered processing designs
+- accept blurred DP-EH Gold, DP-SP Gold, or DDC Gold exposure boundaries
 - reduce QA to formatting review when architecture or control issues exist
 - introduce enterprise-confidential validation processes into the public repository

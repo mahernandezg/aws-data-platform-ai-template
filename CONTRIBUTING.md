@@ -11,7 +11,7 @@ All contributions should be:
 - aligned with the repository glossary, architecture, environment model, and service-mapping guidance
 - generic and reusable for a public template
 - explicit about architecture boundaries and responsibilities
-- consistent with mandatory platform standards, including IAM Roles only and Apache Iceberg from ISC onward
+- consistent with mandatory platform standards, including IAM Roles only, Apache Iceberg from ISC onward, and Medallion layer ownership from Landing Zone through Gold
 - safe for public sharing
 
 ## Branch Strategy
@@ -48,7 +48,7 @@ When relevant, the pull request description should also state:
 
 - which architecture component is affected: `ISC`, `DP-EH`, `DP-SP`, `DCS`, or `DDC`
 - which environments are affected: `DIT`, `DEV`, `QA`, `PPRD`, or `PRD`
-- whether the change reinforces or depends on mandatory standards such as IAM Roles only, Apache Iceberg, or Redshift serving boundaries
+- whether the change reinforces or depends on mandatory standards such as IAM Roles only, Apache Iceberg, Redshift serving boundaries, or Medallion layer boundaries
 
 Before opening a pull request, check that the change does not:
 
@@ -130,8 +130,13 @@ When contributing documentation, prompts, instructions, templates, or code, keep
 - `DP-SP` does not use `QA`
 - IAM access is role-based and uses IAM Roles only
 - Apache Iceberg is the standard Open Table Format from `ISC` onward
+- `ISC` owns the Landing Zone only
+- `DP-EH` owns enterprise Bronze, Silver, and Gold processing
+- `DP-SP` owns spoke-aligned Bronze and Silver processing, plus Gold only for domain-specific Data Products or domain-specific enhancements of `DP-EH` Gold outputs
 - Amazon Redshift is for serving final Data Products, not for large-scale processing
 - `DDC` supports both Redshift-based serving and `S3 + Apache Iceberg + Athena` consumption patterns
+- `DDC` exposes Gold Data Products to consumers and must not become a processing layer
+- AI-oriented access to Bronze, Silver, or Gold must be treated as a controlled exception rather than the default consumer pattern
 - data processing belongs to `DP-EH` or `DP-SP`, not to `DDC`
 
 ## Review Standard

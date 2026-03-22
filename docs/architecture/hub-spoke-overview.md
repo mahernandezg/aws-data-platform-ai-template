@@ -91,6 +91,19 @@ Typical responsibilities include:
 - downstream integration enablement
 - distribution controls and traceability
 
+## High-Level Data Layering
+
+The repository also uses Medallion Data Architecture as the logical data-layer model across the platform.
+
+At high level:
+
+- ISC is responsible for the Landing Zone and raw data Ingestion only
+- DP-EH owns enterprise Bronze, Silver, and Gold processing
+- DP-SP owns spoke-aligned Bronze and Silver processing, plus Gold only for domain-specific Data Products or domain-specific enhancements of DP-EH Gold outputs
+- DDC exposes Gold Data Products to consumers
+
+This layering model is mandatory and must remain aligned with the Apache Iceberg standard from ISC onward. It must not blur Hub versus Spoke ownership, and it must not turn DDC into a processing layer. AI-oriented access to Bronze, Silver, or Gold is allowed only as a controlled exception to the default consumer-exposure pattern.
+
 ## High-Level Interaction Model
 
 The expected architecture flow for this repository is:

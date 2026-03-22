@@ -35,6 +35,8 @@ Always align with:
 - Use DP-EH for Centralized Processing and enterprise-shared logic.
 - Use DP-SP for domain-aligned Distributed Processing.
 - Do not assign primary dbt transformation ownership to DDC.
+- Use Bronze, Silver, and Gold terminology explicitly when the model layer is relevant.
+- Keep DP-EH Gold ownership distinct from DP-SP Gold ownership.
 
 ### IAM
 
@@ -60,6 +62,7 @@ When generating dbt artifacts:
 - include the mandatory repository header where the file type allows it
 - state the model purpose
 - identify whether the model belongs to DP-EH or DP-SP
+- identify whether the model belongs to Bronze, Silver, or Gold
 - make source-to-model intent traceable
 - keep joins, filters, and derivations understandable
 - make naming align with business meaning and architecture ownership
@@ -82,6 +85,7 @@ When reviewing dbt models, prioritize:
 Do not:
 
 - mix DP-EH and DP-SP ownership in one model without explicit boundary explanation
+- blur enterprise Gold ownership with domain-specific Gold ownership
 - use DDC as the default home for dbt transformations
 - produce opaque SQL that hides business meaning
 - assume IAM Users or static credentials

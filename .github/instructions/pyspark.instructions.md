@@ -34,6 +34,7 @@ Always align with:
 - PySpark processing belongs in DP-EH or DP-SP, and in some ingestion-oriented cases in ISC.
 - Do not put primary processing logic in DDC.
 - Do not use PySpark to blur Centralized Processing and Distributed Processing ownership.
+- Identify whether the job supports Landing Zone, Bronze, Silver, or Gold responsibilities when relevant.
 
 ### IAM
 
@@ -68,6 +69,7 @@ When generating PySpark code:
 - In DP-EH, favor industrialized Spark patterns suitable for enterprise-scale processing.
 - In DP-SP, use PySpark when domain scale, complexity, or reuse justifies it.
 - Keep enterprise-shared logic in DP-EH and domain-bounded logic in DP-SP.
+- Keep enterprise Gold ownership in DP-EH distinct from domain-specific Gold ownership in DP-SP.
 - Preserve Data Quality, Metadata, and Data Lineage intent in job structure and naming.
 
 ## Review Priorities
@@ -90,5 +92,6 @@ Do not:
 - default to non-Iceberg terminal outputs
 - hardcode secrets, ARNs, account IDs, or private endpoints
 - create one script that mixes ISC, DP-EH, and DP-SP responsibilities
+- blur Landing Zone, Bronze, Silver, or Gold ownership
 - write Spark jobs that treat Redshift as the platform batch engine
 - produce throwaway notebook-style code and present it as production-structured output

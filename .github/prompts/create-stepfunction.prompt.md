@@ -26,8 +26,10 @@ Mandatory rules:
 - use IAM Roles only
 - do not use IAM Users
 - preserve Apache Iceberg as the standard Open Table Format from ISC onward
+- identify whether the workflow supports Landing Zone, Bronze, Silver, Gold, or Gold exposure behavior
 - do not position Amazon Redshift as a processing engine
 - keep DDC out of primary processing orchestration
+- keep DDC Gold exposure separate from DP-EH and DP-SP Gold processing ownership
 - preserve Metadata, Data Lineage, Data Quality, governance, and Observability expectations
 
 If workflow definition or code is requested:
@@ -53,3 +55,4 @@ Do not:
 - design workflows that imply non-Iceberg default storage patterns
 - use Step Functions to justify putting processing responsibilities into DDC
 - describe IAM Users as valid runtime identities
+- blur Landing Zone, Bronze, Silver, Gold, and DDC exposure boundaries

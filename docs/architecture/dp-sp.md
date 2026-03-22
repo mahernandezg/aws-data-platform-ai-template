@@ -6,6 +6,8 @@ DP-SP is the architecture component responsible for Distributed Processing in th
 
 It exists to provide domain-aligned processing capability within the Hub-and-Spoke Architecture while preserving shared governance, Metadata, security, and operational standards. In this repository, DP-SP gives a Data Domain controlled autonomy for domain-specific Transformation and Data Product preparation without requiring all processing to be centralized in DP-EH.
 
+Within the repository's Medallion Data Architecture, DP-SP owns spoke-aligned Bronze and Silver processing. DP-SP may own Gold only for domain-specific Data Products or for domain-specific enhancements of DP-EH Gold outputs. It does not define enterprise-wide canonical Gold Data Products.
+
 ## Responsibilities
 
 - Execute Distributed Processing for domain-aligned use cases.
@@ -16,6 +18,7 @@ It exists to provide domain-aligned processing capability within the Hub-and-Spo
 - Support domain-specific processing sequences through approved Orchestration patterns.
 - Maintain clear ownership boundaries between spoke processing and shared platform services.
 - Publish governed outputs for downstream Data Distribution through DDC.
+- Own spoke Bronze and Silver processing, with constrained Gold ownership only inside the spoke boundary rules.
 
 ## Scope and Boundaries
 
@@ -26,6 +29,7 @@ DP-SP includes:
 - preparation of domain-aligned Data Products
 - processing patterns that require local delivery autonomy within shared platform rules
 - integration with shared platform services without duplicating them
+- spoke Bronze and Silver ownership, plus constrained Gold ownership where repository rules allow it
 
 DP-SP does not include:
 
@@ -35,6 +39,7 @@ DP-SP does not include:
 - primary consumer-facing Data Distribution ownership owned by DDC
 - enterprise-wide reusable capabilities that justify centralization
 - uncontrolled bypass of shared governance, Metadata, security, or observability standards
+- enterprise-wide canonical Gold ownership that belongs to DP-EH
 
 ## Inbound Interactions
 
@@ -74,6 +79,7 @@ Within the Data Plane, DP-SP is responsible for:
 - executing domain-specific Transformation logic
 - producing spoke-owned outputs that support Data Products and downstream Distribution
 - preserving processing traceability needed for Data Lineage
+- owning spoke Bronze and Silver progression and Gold only where the output remains domain-specific or explicitly enhances DP-EH Gold
 
 ### Control Plane Responsibilities
 
@@ -116,7 +122,7 @@ Typical AWS services aligned to DP-SP include:
 - Apache Iceberg
 - AWS Step Functions
 
-These services are indicative of common AWS-native or repository-aligned spoke processing patterns and should be interpreted at architecture level rather than as a mandatory implementation list.
+These services are indicative of common AWS-native or repository-aligned spoke processing patterns and should be interpreted at architecture level rather than as a mandatory implementation list. In Medallion terms, DP-SP owns spoke Bronze and Silver processing and has constrained Gold ownership only for domain-specific outputs or enhancements of DP-EH Gold assets.
 
 ## Governance and Security Considerations
 
@@ -151,6 +157,7 @@ DP-SP is not:
 - the governed Data Distribution layer
 - a duplicate of shared enterprise services already provided by DCS or DP-EH
 - an exception path that operates outside shared governance and platform standards
+- the owner of enterprise-wide canonical Gold Data Products
 
 DP-SP must remain the spoke-aligned component for Distributed Processing and should only host capabilities that belong to a bounded domain context.
 

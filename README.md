@@ -66,6 +66,21 @@ This model is intended to support both centralized and domain-aligned data platf
 
 ---
 
+## Medallion Layer Model
+
+The repository also enforces Medallion Data Architecture naming and layer responsibility across the platform.
+
+The required mapping is:
+
+- ISC owns the Landing Zone and raw data Ingestion only
+- DP-EH owns enterprise Bronze, Silver, and Gold processing
+- DP-SP owns spoke-aligned Bronze and Silver processing, plus Gold only for domain-specific Data Products or domain-specific enhancements of DP-EH Gold outputs
+- DDC exposes Gold Data Products to consumers
+
+This layer model is mandatory, not optional. It must remain aligned with Apache Iceberg as the standard Open Table Format, must preserve Hub versus Spoke boundaries, and must not turn DDC into a processing layer. AI-oriented access to Bronze, Silver, or Gold is allowed only as a controlled exception to the default consumer-exposure pattern.
+
+---
+
 ## Environment Model
 
 The repository uses the following environment model:
@@ -110,6 +125,7 @@ The following standards are mandatory across the repository:
 
 - Apache Iceberg is the standard Open Table Format.
 - From ISC onward, data must be landed and standardized in Apache Iceberg.
+- Medallion layers from Bronze through Gold must remain aligned with the Apache Iceberg standard.
 
 ### Redshift
 
@@ -126,6 +142,8 @@ The following standards are mandatory across the repository:
 ### Consumption
 
 - DDC supports both Redshift-based serving and S3 plus Apache Iceberg plus Athena serverless consumption patterns.
+- In the default platform pattern, DDC exposes Gold Data Products to consumers.
+- AI workloads may access Bronze, Silver, or Gold only as a controlled exception.
 
 ### SageMaker Unified Studio
 
@@ -345,7 +363,7 @@ When using Copilot or Codex in this repository:
 
 - identify the architecture component first: `ISC`, `DP-EH`, `DP-SP`, `DCS`, or `DDC`
 - identify the environment scope when relevant: `DIT`, `DEV`, `QA`, `PPRD`, or `PRD`
-- state the mandatory standards when they matter: IAM Roles only, Apache Iceberg from ISC onward, Redshift only for serving final Data Products
+- state the mandatory standards when they matter: IAM Roles only, Apache Iceberg from ISC onward, Redshift only for serving final Data Products, and Medallion layer ownership from Landing Zone through Gold
 - use the matching prompt for the task family
 - rely on the matching instruction file to keep the output consistent and opinionated
 

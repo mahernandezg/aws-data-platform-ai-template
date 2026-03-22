@@ -90,6 +90,7 @@ Expected controls in DIT include:
 
 - basic alignment with architecture boundaries
 - explicit identification of the component being explored
+- explicit respect for Medallion layer ownership, even in proof-of-concept work
 - controlled use of Metadata where relevant
 - traceability of experiments that influence future design decisions
 - access controls appropriate to exploratory workloads
@@ -159,6 +160,7 @@ DIT is not:
 - a production-like validation stage
 - a place to host stable downstream consumer workloads
 - an excuse to ignore Data Governance, security, Metadata, or architecture boundaries
+- a place to ignore Landing Zone, Bronze, Silver, Gold, or DDC exposure boundaries because the work is exploratory
 
 DIT must remain an exploratory environment with architectural discipline, not a permanent holding area for unfinished platform capabilities.
 

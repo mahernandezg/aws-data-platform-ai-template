@@ -41,6 +41,12 @@ Always align with:
 - Preserve Apache Iceberg as the standard Open Table Format from ISC onward.
 - Do not provision default storage or metadata patterns that imply non-Iceberg tables as the platform baseline.
 
+### Medallion
+
+- Keep Landing Zone, Bronze, Silver, Gold, and DDC exposure ownership explicit in Terraform examples and reviews.
+- Do not let Terraform examples blur enterprise Gold ownership in DP-EH with domain-specific Gold ownership in DP-SP.
+- Do not let Terraform move consumer-facing Gold exposure out of DDC.
+
 ### Redshift
 
 - Treat Amazon Redshift as a serving layer for final Data Products.
@@ -96,3 +102,4 @@ Do not:
 - create DP-SP QA patterns
 - hardcode organization-specific account structures as if they were repository defaults
 - add private company identifiers, internal URLs, or confidential standards
+- create Terraform patterns that blur Landing Zone, Bronze, Silver, Gold, or DDC exposure boundaries

@@ -88,6 +88,7 @@ PRD requires the strongest governance and control level in the environment model
 Expected controls in PRD include:
 
 - strict adherence to architecture component responsibilities
+- strict adherence to Medallion layer ownership from Landing Zone through Gold exposure
 - controlled promotion from earlier environments, especially PPRD
 - strong Data Governance and Data Quality enforcement
 - explicit Metadata and Data Lineage management
@@ -160,6 +161,7 @@ PRD is not:
 - a production-like simulation stage
 - a place to introduce unresolved architectural or operational ambiguity
 - an environment where changes can be treated as low-risk
+- an environment where Gold exposure or lower-layer access patterns can drift outside the defined Medallion rules
 
 PRD must remain the stable governed operational environment of the Data Platform and should only host capabilities that are ready for real use.
 

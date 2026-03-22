@@ -17,11 +17,19 @@ Two platform standards are not optional:
 
 Everything else in this document should be read as architecture-aligned selection guidance within those hard constraints.
 
+The repository also enforces Medallion Data Architecture responsibilities:
+
+- ISC owns the Landing Zone only
+- DP-EH owns enterprise Bronze, Silver, and Gold processing
+- DP-SP owns spoke Bronze and Silver processing, plus constrained Gold ownership for domain-specific outputs or enhancements of DP-EH Gold assets
+- DDC exposes Gold Data Products to consumers, with AI-oriented access to Bronze, Silver, or Gold treated as a controlled exception
+
 ## Mapping Principles
 
 - Service selection must start from architecture responsibility, not from product preference.
 - Shared foundational concerns belong in DCS and should not be duplicated in every component.
 - Hub responsibilities and Spoke responsibilities must remain clearly separated.
+- Medallion layer ownership must remain explicit from Landing Zone through Gold.
 - Data access must be governed through role-based access and shared control services.
 - Observability must be designed as a platform concern, not added only after incidents.
 - IAM Roles are mandatory across the platform, including automation, runtime execution, and operational access.
@@ -51,6 +59,18 @@ Apache Iceberg is the standard Open Table Format across the entire Data Platform
 - Metadata, Data Lineage, and downstream access design should assume Iceberg consistency across the Data Platform.
 
 This standard exists to provide a consistent governed table model with ACID behavior, schema evolution support, partition evolution flexibility, and strong interoperability across processing and consumption services.
+
+### Medallion Layer Standard
+
+The Data Platform uses a mandatory Medallion layer model.
+
+- ISC owns the Landing Zone and raw data Ingestion only.
+- DP-EH owns enterprise Bronze, Silver, and Gold processing.
+- DP-SP owns spoke Bronze and Silver processing, plus Gold only for domain-specific Data Products or domain-specific enhancements of DP-EH Gold outputs.
+- DDC exposes Gold Data Products to consumers.
+- AI-oriented access to Bronze, Silver, or Gold is allowed only as a controlled exception.
+
+This standard exists to keep Landing Zone, Bronze, Silver, Gold, processing ownership, and Distribution responsibilities explicit across the platform.
 
 ### Data Product Consumption Pattern
 
@@ -146,6 +166,11 @@ Typical services:
 - AWS Lambda
 - AWS Database Migration Service (AWS DMS)
 
+Medallion alignment:
+
+- supports the Landing Zone in ISC
+- supports raw-entry controls before Bronze standardization
+
 ### Processing
 
 Typical services:
@@ -158,12 +183,22 @@ Typical services:
 - Amazon EMR
 - AWS Glue Studio
 
+Medallion alignment:
+
+- supports Bronze, Silver, and Gold processing ownership in DP-EH
+- supports Bronze, Silver, and constrained Gold processing in DP-SP
+
 ### Storage
 
 Typical services:
 
 - Amazon S3
 - Apache Iceberg
+
+Medallion alignment:
+
+- supports Landing Zone handoff and all Medallion layers
+- preserves Apache Iceberg as the standard format from Bronze onward
 
 ### Metadata and Governance
 
@@ -203,6 +238,11 @@ Typical services:
 - Amazon Athena
 - Amazon Redshift
 - JDBC endpoints for Athena and Redshift
+
+Medallion alignment:
+
+- supports Gold exposure in DDC
+- supports AI-oriented access to Bronze, Silver, or Gold only as a controlled exception
 
 ### AI Services
 
@@ -251,6 +291,7 @@ Why they fit:
 - Apache Iceberg is mandatory from ISC onward, so ingestion outputs must be standardized in Iceberg rather than left in ad hoc table formats.
 - Glue services support ingestion jobs, schema discovery, and metadata alignment.
 - Event-driven services support controlled orchestration at the ingestion boundary.
+- In Medallion terms, ISC owns the Landing Zone and hands data into downstream Bronze standardization.
 
 Boundaries:
 
@@ -258,6 +299,7 @@ Boundaries:
 - ISC is not the place for consumer-facing Distribution.
 - ISC should not treat non-Iceberg landing structures as the default platform pattern.
 - ISC should not introduce IAM User-based access. Runtime access must use IAM Roles.
+- ISC does not own Bronze, Silver, or Gold processing.
 
 ## DP-EH - Data Processing Center - Enterprise Hub
 
@@ -299,6 +341,7 @@ Why they fit:
 - S3 plus Iceberg provides the storage and table foundation for shared enterprise processing.
 - Redshift may be used as a producer cluster when producer-side serving structures are required before governed sharing, but not as the main heavy-processing engine and not as a substitute for DDC consumer serving.
 - SageMaker Unified Studio fits exploration, feature engineering, ML experimentation, and model development in the hub.
+- In Medallion terms, DP-EH owns enterprise Bronze, Silver, and Gold processing.
 
 Boundaries:
 
@@ -307,6 +350,7 @@ Boundaries:
 - DP-EH should not treat producer-side Redshift structures as the final consumer-serving layer.
 - DP-EH should not produce non-Iceberg default tables from shared processing flows.
 - DP-EH should not duplicate DCS governance responsibilities.
+- DP-EH Gold ownership must remain distinct from spoke-specific Gold ownership in DP-SP.
 
 ## DP-SP - Data Processing Center - Spoke
 
@@ -346,6 +390,7 @@ Why they fit:
 - S3 plus Iceberg remains the mandatory storage and table standard.
 - Redshift may be used as a producer cluster when spoke strategy requires producer-side serving structures before governed sharing, but it is not the default engine for heavy batch processing and not the final consumer-serving layer.
 - SageMaker Unified Studio fits spoke-side exploration, feature engineering, ML experimentation, and model development.
+- In Medallion terms, DP-SP owns spoke Bronze and Silver processing and Gold only where the output remains domain-specific or enhances DP-EH Gold.
 
 Boundaries:
 
@@ -354,6 +399,7 @@ Boundaries:
 - DP-SP should not treat producer-side Redshift structures as the final consumer-serving layer.
 - DP-SP should not treat visual tools as an excuse to abandon Iceberg standardization.
 - DP-SP does not use QA in the environment model, so validation patterns must be designed accordingly.
+- DP-SP must not define enterprise-wide canonical Gold Data Products.
 
 ## DCS - Data Core Services
 
@@ -429,6 +475,7 @@ Why they fit:
 - Redshift is a valid consumer-cluster serving layer where high-performance structured consumption, BI workloads, query performance, and read optimization justify it.
 - Where producer and consumer Redshift patterns coexist, DDC is the place where consumer-serving Redshift access should be exposed.
 - SageMaker Unified Studio fits discovery, profiling, catalog exploration, and subscription workflows in DDC, but not processing.
+- In Medallion terms, DDC exposes Gold Data Products to consumers and may permit AI-oriented access to Bronze, Silver, or Gold only as a controlled exception.
 
 Boundaries:
 
@@ -437,6 +484,7 @@ Boundaries:
 - DDC supports both Redshift consumer clusters and S3 plus Iceberg plus Athena serverless consumption patterns.
 - DDC should not position Redshift as a processing engine or as the default processing engine.
 - DDC should not expose consumer-facing assets outside role-based access and shared governance controls.
+- DDC must not become the owner of Bronze, Silver, or Gold processing.
 
 ## Cross-Cutting Core Services Mapping
 
@@ -520,6 +568,7 @@ Across all environments:
 - Apache Iceberg remains the standard table format from ISC onward
 - IAM Roles remain the only valid access model
 - DP-SP excludes QA and moves from DEV to PPRD
+- Medallion layer responsibilities remain stable across environments: Landing Zone in ISC, enterprise Bronze/Silver/Gold in DP-EH, spoke Bronze/Silver and constrained Gold in DP-SP, and Gold exposure in DDC by default
 
 ## Design Guidance and Trade-Offs
 
@@ -543,6 +592,7 @@ Across all environments:
 - Redshift is a strong fit for high-performance structured consumption, BI workloads, final serving structures, and curated delivery patterns that need read optimization.
 - Redshift should be positioned as a serving and consumption optimization layer, not as a processing engine and not as the main engine for heavy large-scale data processing.
 - If producer-side Redshift structures exist in DP-EH or DP-SP, they should feed governed sharing patterns rather than replace DDC as the final consumer-serving layer.
+- In the default Medallion consumption pattern, DDC exposes Gold only. Access to Bronze or Silver should be reserved for controlled AI-oriented exceptions rather than general downstream consumption.
 
 ### When to Avoid Amazon Redshift
 

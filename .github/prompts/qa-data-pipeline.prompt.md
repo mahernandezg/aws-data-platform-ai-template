@@ -25,8 +25,10 @@ Mandatory rules:
 - do not assign QA usage to DP-SP, because DP-SP does not use QA in this repository
 - preserve IAM Roles only as the access model
 - preserve Apache Iceberg as the standard Open Table Format from ISC onward
+- validate Medallion-layer ownership explicitly when Landing Zone, Bronze, Silver, or Gold behavior is involved
 - treat Amazon Redshift only as a serving layer for final Data Products, not as a processing engine
 - keep DDC as a Distribution layer, not a processing layer
+- keep DP-EH Gold ownership distinct from DP-SP Gold ownership and keep DDC limited to Gold exposure except for controlled AI-oriented access
 - keep quality checks aligned to Data Quality, Data Lineage, Metadata, governance, and Observability expectations
 
 When generating the QA artifact:
@@ -50,3 +52,4 @@ Do not:
 - treat non-Iceberg outputs as acceptable defaults
 - describe IAM Users as valid runtime identities
 - position Redshift as the transformation engine of the pipeline
+- blur Medallion-layer ownership boundaries

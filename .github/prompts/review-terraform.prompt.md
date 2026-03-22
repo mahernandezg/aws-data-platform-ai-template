@@ -25,6 +25,7 @@ Mandatory review checks:
 - verify IAM uses IAM Roles only
 - verify IAM Users are not introduced
 - verify Apache Iceberg remains the standard storage and table pattern where relevant
+- verify Landing Zone, Bronze, Silver, Gold, and DDC exposure boundaries remain explicit
 - verify Amazon Redshift is not treated as a large-scale processing engine
 - verify DDC is not used as a processing layer
 - verify naming, boundaries, and service selection remain consistent with the repository architecture
@@ -56,3 +57,4 @@ Do not:
 - accept non-Iceberg default table patterns
 - accept Redshift-centered batch-processing designs
 - accept Terraform that blurs hub responsibilities and spoke responsibilities
+- accept Terraform that blurs DP-EH Gold, DP-SP Gold, or DDC Gold exposure boundaries

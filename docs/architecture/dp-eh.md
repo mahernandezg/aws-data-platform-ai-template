@@ -6,6 +6,8 @@ DP-EH is the architecture component responsible for Centralized Processing in th
 
 It exists to provide shared and reusable enterprise processing capabilities that should not be duplicated across multiple Data Domains or spoke-aligned workloads. In the Hub-and-Spoke Architecture used by this repository, DP-EH is the Enterprise Hub for common Transformation patterns, shared processing logic, and reusable processing services that support enterprise-scale consistency.
 
+Within the repository's Medallion Data Architecture, DP-EH owns enterprise Bronze, Silver, and Gold processing. It is the only component that should define enterprise-wide canonical Gold Data Products.
+
 ## Responsibilities
 
 - Execute Centralized Processing for shared enterprise use cases.
@@ -16,6 +18,7 @@ It exists to provide shared and reusable enterprise processing capabilities that
 - Integrate with DCS-supported Metadata, Data Governance, Data Quality, and Observability capabilities.
 - Support cross-domain processing scenarios that do not belong exclusively to a single Data Domain.
 - Publish governed outputs for downstream Data Distribution through DDC.
+- Own enterprise Bronze standardization, Silver Transformation, and Gold Data Product modeling.
 
 ## Scope and Boundaries
 
@@ -26,6 +29,7 @@ DP-EH includes:
 - centrally managed processing capabilities that support multiple domains
 - preparation of shared Data Products for downstream governed Distribution
 - enterprise-scale processing responsibilities that require strong consistency
+- enterprise Bronze, Silver, and Gold layer ownership
 
 DP-EH does not include:
 
@@ -35,6 +39,7 @@ DP-EH does not include:
 - primary consumer-facing Data Distribution ownership owned by DDC
 - domain-specific processing that belongs to a single spoke without a clear centralization need
 - unrestricted accumulation of unrelated workloads under a generic hub label
+- spoke-owned Gold Data Products that belong only to a bounded domain context
 
 ## Inbound Interactions
 
@@ -74,6 +79,7 @@ Within the Data Plane, DP-EH is responsible for:
 - executing shared Transformation logic for enterprise use cases
 - producing reusable outputs that support shared Data Products and downstream Distribution
 - preserving processing traceability needed for Data Lineage
+- owning enterprise Bronze, Silver, and Gold progression with clear separation from DDC exposure responsibilities
 
 ### Control Plane Responsibilities
 
@@ -118,7 +124,7 @@ Typical AWS services aligned to DP-EH include:
 - Amazon Redshift
 - Apache Iceberg
 
-These services are indicative of common AWS-native or repository-aligned processing patterns and should be interpreted at architecture level rather than as a mandatory implementation list.
+These services are indicative of common AWS-native or repository-aligned processing patterns and should be interpreted at architecture level rather than as a mandatory implementation list. In Medallion terms, DP-EH is the primary enterprise owner of Bronze, Silver, and Gold processing, with Apache Iceberg remaining the standard table format across those layers.
 
 ## Governance and Security Considerations
 
@@ -153,6 +159,7 @@ DP-EH is not:
 - the governed Data Distribution layer
 - a generic replacement for every domain-owned processing need
 - an unrestricted repository for any workload labeled as enterprise
+- a place to blur enterprise Gold ownership with domain-specific spoke Gold ownership
 
 DP-EH must remain the Enterprise Hub for Centralized Processing and should only host capabilities with a clear centralization rationale.
 

@@ -92,6 +92,7 @@ Expected controls in QA include:
 - clearly defined scope of what is being validated
 - traceable validation activity and outcome recording
 - controlled change entry so testing is performed on identifiable versions of shared platform capabilities
+- explicit validation of Medallion ownership where Landing Zone, Bronze, Silver, Gold, or Gold exposure behavior is relevant
 - explicit Data Governance, Metadata, and Data Quality expectations
 - alignment between validation scope and downstream promotion readiness
 
@@ -163,6 +164,7 @@ QA is not:
 - a substitute for PPRD production-like validation
 - a place to perform uncontrolled design changes during testing
 - a final operational environment for downstream consumers
+- a place to normalize blurred Medallion boundaries during validation
 
 QA must remain the structured validation environment for shared platform capabilities, with its component scope explicitly limited to ISC, DP-EH, DCS, and DDC.
 
