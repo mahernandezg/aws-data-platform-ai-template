@@ -42,6 +42,27 @@ Why QA applies only to shared platform components:
 
 DP-SP does not use QA in this repository. Spoke-aligned workloads progress from DEV to PPRD without a standalone QA stage. QA must therefore not be described as a universal environment across all architecture components.
 
+## Account and Region Model
+
+QA is a controlled environment and therefore uses isolated AWS account boundaries.
+
+The explicit component-aligned QA account groups are:
+
+- ISC-QA
+- DP-EH-QA
+- DDC-QA
+
+DCS remains the shared control and governance layer across those account boundaries rather than being defined here as a separate component-owned QA account family.
+
+DP-SP does not have QA accounts in this repository.
+
+Region scope for QA is:
+
+- us-east-1
+- eu-west-1
+
+QA is therefore a controlled multi-region environment for the components that use it.
+
 ## Types of Workloads
 
 Workloads expected in QA are validation-oriented rather than implementation-oriented.
@@ -165,9 +186,10 @@ QA is not:
 - a place to perform uncontrolled design changes during testing
 - a final operational environment for downstream consumers
 - a place to normalize blurred Medallion boundaries during validation
+- an environment available through shared DIT accounts
 
 QA must remain the structured validation environment for shared platform capabilities, with its component scope explicitly limited to ISC, DP-EH, DCS, and DDC.
 
 ## Summary
 
-QA is the structured quality-assurance environment of the Data Platform. It exists to validate shared platform capabilities across ISC, DP-EH, DCS, and DDC before they progress to PPRD, while explicitly excluding DP-SP from its scope in accordance with the repository environment model.
+QA is the structured quality-assurance environment of the Data Platform. It exists to validate shared platform capabilities across isolated multi-region QA account boundaries for ISC, DP-EH, DCS, and DDC, while explicitly excluding DP-SP from its scope.

@@ -40,6 +40,26 @@ Why all components use DEV:
 
 DEV is therefore the shared engineering environment for both hub-oriented and spoke-oriented work.
 
+## Account and Region Model
+
+DEV is a controlled environment and therefore uses isolated AWS account boundaries.
+
+The explicit component-aligned DEV account groups are:
+
+- ISC-DEV
+- DP-EH-DEV
+- DP-SP-DEV
+- DDC-DEV
+
+DCS remains the shared control and governance layer across those account boundaries rather than being defined here as a separate component-owned DEV account family.
+
+Region scope for DEV is:
+
+- us-east-1
+- eu-west-1
+
+DEV is therefore a controlled multi-region environment, unlike the shared DIT sandbox model.
+
 ## Types of Workloads
 
 Workloads expected in DEV are implementation-oriented and integration-aware.
@@ -162,9 +182,10 @@ DEV is not:
 - a stable operational environment for downstream consumers
 - a place to bypass shared governance or architecture boundaries because work is still under development
 - a place to blur DP-EH Gold, DP-SP Gold, or DDC Gold exposure boundaries during implementation
+- a shared experimentation account pool
 
 DEV must remain the active development and integration environment of the Data Platform, not a replacement for later validation stages.
 
 ## Summary
 
-DEV is the active development environment of the Data Platform. It exists to support implementation, iteration, integration, and pilot-grade refinement across ISC, DP-EH, DP-SP, DCS, and DDC before workloads advance into structured validation and production-like readiness stages.
+DEV is the active development environment of the Data Platform. It exists to support implementation, iteration, integration, and pilot-grade refinement across account-isolated multi-region component boundaries before workloads advance into structured validation and production-like readiness stages.

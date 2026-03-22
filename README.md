@@ -110,6 +110,53 @@ DP-SP uses:
 
 This distinction reflects the repository rule that DP-SP does not use a standalone QA stage in the same way as shared platform services.
 
+### AWS Account Model
+
+The repository also enforces a multi-account architecture model.
+
+Controlled environments use isolated AWS account boundaries rather than one shared account across the full platform lifecycle.
+
+The explicit component-aligned account groups are:
+
+- ISC-DEV, ISC-QA, ISC-PPRD, ISC-PRD
+- DP-EH-DEV, DP-EH-QA, DP-EH-PPRD, DP-EH-PRD
+- DP-SP-DEV, DP-SP-PPRD, DP-SP-PRD
+- DDC-DEV, DDC-QA, DDC-PPRD, DDC-PRD
+
+This means:
+
+- ISC does not have DIT
+- DP-EH does not have DIT
+- DDC does not have DIT
+- DP-SP does not have DIT
+- DP-SP does not have QA
+
+DIT does not use component-owned account groups. It is shared experimentation capacity only and consists of:
+
+- DIT-1
+- DIT-2
+- DIT-3
+- DIT-4
+
+DCS remains the shared control and governance layer across these isolated account boundaries rather than being described as a separate component-owned environment account family.
+
+### Multi-Region Model
+
+Multi-region is part of the architecture design, not a future aspiration.
+
+The controlled platform operates in:
+
+- us-east-1
+- eu-west-1
+
+ISC, DP-EH, DP-SP, and DDC participate in both regions for the controlled platform model.
+
+The four shared DIT accounts exist only in:
+
+- eu-west-1
+
+DIT therefore supports experimentation only in eu-west-1. It is not a multi-region shared sandbox model in the same way as DEV, QA, PPRD, and PRD.
+
 ---
 
 ## Mandatory Platform Standards

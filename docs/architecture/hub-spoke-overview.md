@@ -13,10 +13,10 @@ This overview describes:
 - the core architecture building blocks
 - the relationship between centralized and domain-aligned services
 - the expected interaction model between components
-- environment applicability at a platform level
+- the environment, AWS account, and region operating model at platform level
 - architectural boundaries that should remain consistent across this repository
 
-This document does not prescribe detailed implementation patterns for a specific AWS account structure, landing zone, or enterprise operating model. Those concerns should be addressed in downstream design artifacts and implementation templates.
+This document does not prescribe detailed implementation patterns for a specific AWS landing zone, network design, or organization-specific cloud foundation. Those concerns should be addressed in downstream design artifacts and implementation templates.
 
 ## Architecture Intent
 
@@ -134,6 +134,69 @@ DDC and DP-SP interact bidirectionally because spoke teams may consume shared di
 
 DCS supports ISC, DP-EH, DP-SP, and DDC through shared governance, Metadata, access control, orchestration support, Observability, and platform-wide operational services.
 
+## AWS Account Model
+
+The repository uses a multi-account architecture model.
+
+### Controlled environment account groups
+
+Controlled environments use isolated AWS accounts rather than one shared account across the platform lifecycle.
+
+The explicit component-aligned account groups are:
+
+- ISC-DEV, ISC-QA, ISC-PPRD, ISC-PRD
+- DP-EH-DEV, DP-EH-QA, DP-EH-PPRD, DP-EH-PRD
+- DP-SP-DEV, DP-SP-PPRD, DP-SP-PRD
+- DDC-DEV, DDC-QA, DDC-PPRD, DDC-PRD
+
+This means:
+
+- ISC does not have DIT
+- DP-EH does not have DIT
+- DDC does not have DIT
+- DP-SP does not have DIT
+- DP-SP does not have QA
+
+DCS remains the shared control and governance layer across these isolated account boundaries. In this repository, DCS is treated as a cross-cutting control plane concern rather than as a separately enumerated component-owned account family.
+
+### Shared DIT model
+
+DIT does not follow the same component-owned account pattern.
+
+There are only four DIT accounts in total:
+
+- DIT-1
+- DIT-2
+- DIT-3
+- DIT-4
+
+These accounts are shared experimentation capacity for platform users. They are not permanent component-owned environment accounts.
+
+## Multi-Region Architecture
+
+Multi-region is a required architecture characteristic in this repository.
+
+### Controlled platform regions
+
+The controlled platform operates in:
+
+- us-east-1
+- eu-west-1
+
+ISC, DP-EH, DP-SP, and DDC participate in both regions for the controlled platform model.
+
+### DIT region scope
+
+The four shared DIT accounts exist only in:
+
+- eu-west-1
+
+DIT therefore supports experimentation only in eu-west-1. It is not a multi-region shared sandbox model in this repository.
+
+### Region interpretation rule
+
+Region participation is part of the architecture design, not an optional future aspiration. At the same time, this repository does not define organization-specific network topology, CIDR strategy, landing-zone internals, or SCP implementation.
+
 ## Centralization and Autonomy Boundaries
 
 The architecture intentionally separates what should be centralized from what can be delegated.
@@ -175,13 +238,15 @@ The architecture uses the following environment model:
 
 Environment usage by component is:
 
-- ISC: DIT, DEV, QA, PPRD, PRD
-- DP-EH: DIT, DEV, QA, PPRD, PRD
-- DCS: DIT, DEV, QA, PPRD, PRD
-- DDC: DIT, DEV, QA, PPRD, PRD
-- DP-SP: DIT, DEV, PPRD, PRD
+- ISC: shared DIT access, DEV, QA, PPRD, PRD
+- DP-EH: shared DIT access, DEV, QA, PPRD, PRD
+- DCS: shared DIT access, DEV, QA, PPRD, PRD
+- DDC: shared DIT access, DEV, QA, PPRD, PRD
+- DP-SP: shared DIT access, DEV, PPRD, PRD
 
 The absence of `QA` for `DP-SP` reflects the repository rule that spoke environments do not use a standalone QA stage in the same way as shared platform services.
+
+The use of `shared DIT access` reflects that DIT is available for experimentation but is not owned through dedicated component-specific DIT account groups.
 
 ## Typical AWS Service Alignment
 
@@ -214,7 +279,6 @@ This repository favors AWS-native patterns. The following service categories are
 - Apache Spark or PySpark
 - dbt
 - AWS Glue Studio
-- AWS Glue DataBrew
 - Amazon S3
 - Apache Iceberg
 - AWS Step Functions
@@ -269,7 +333,6 @@ This overview should be treated as the baseline reference when authoring:
 
 - the architecture glossary
 - individual architecture component documents
-- role definitions
 - environment documentation
 - AWS service mapping guidance
 - GitHub prompt and instruction artifacts

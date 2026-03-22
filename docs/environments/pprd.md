@@ -40,6 +40,26 @@ Why all components use PPRD:
 
 PPRD is therefore the common final readiness environment across both hub-oriented and spoke-oriented components.
 
+## Account and Region Model
+
+PPRD is a controlled environment and therefore uses isolated AWS account boundaries.
+
+The explicit component-aligned PPRD account groups are:
+
+- ISC-PPRD
+- DP-EH-PPRD
+- DP-SP-PPRD
+- DDC-PPRD
+
+DCS remains the shared control and governance layer across those account boundaries rather than being defined here as a separate component-owned PPRD account family.
+
+Region scope for PPRD is:
+
+- us-east-1
+- eu-west-1
+
+PPRD is therefore a controlled multi-region environment for both hub-oriented and spoke-oriented readiness validation.
+
 ## Types of Workloads
 
 Workloads expected in PPRD are production-like validation workloads rather than exploratory or implementation-oriented workloads.
@@ -166,9 +186,10 @@ PPRD is not:
 - a place to accept unresolved architectural ambiguity
 - a casual staging area without strong governance and readiness discipline
 - a place to carry unresolved Medallion ownership ambiguity into PRD
+- a shared experimentation account pool
 
 PPRD must remain the controlled production-like validation environment of the Data Platform, distinct from both earlier testing environments and PRD operational use.
 
 ## Summary
 
-PPRD is the production-like validation environment of the Data Platform. It exists to provide final readiness confirmation across ISC, DP-EH, DP-SP, DCS, and DDC so that only stable, governed, and operationally credible workloads progress into PRD.
+PPRD is the production-like validation environment of the Data Platform. It exists to provide final readiness confirmation across isolated multi-region account boundaries for ISC, DP-EH, DP-SP, DCS, and DDC so that only stable, governed, and operationally credible workloads progress into PRD.
