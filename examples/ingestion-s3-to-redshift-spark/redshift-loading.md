@@ -8,7 +8,7 @@ This note explains the incremental loading pattern used to move the final Gold-r
 
 This example uses:
 
-- controlled S3 staging for the current Gold-ready batch
+- controlled S3 staging for the current serving increment
 - `COPY` into a Redshift staging table
 - `MERGE` from the staging table into the final Gold serving table
 
@@ -23,10 +23,11 @@ This pattern fits the repository architecture because:
 
 ## Logical Sequence
 
-1. Spark writes the current Gold-serving increment to a controlled S3 prefix.
-2. DDC loads that increment into a Redshift staging table by using `COPY`.
-3. DDC merges the staged rows into the final Gold serving table.
-4. Optional serving views or materialized views are refreshed if needed.
+1. Spark reconciles the current batch with the existing Iceberg Gold snapshot for affected business keys.
+2. Spark writes the resulting serving increment to a controlled S3 prefix.
+3. DDC loads that increment into a Redshift staging table by using `COPY`.
+4. DDC merges the staged rows into the final Gold serving table.
+5. Optional serving views or materialized views are refreshed if needed.
 
 ## Staging Table Pattern
 
@@ -35,7 +36,7 @@ The staging table should mirror the serving table closely enough to support dete
 Typical design intent:
 
 - one load batch identifier for traceability
-- business keys needed for merge logic
+- business keys needed for merge logic and reconciliation
 - payload columns needed by the serving table
 - audit columns such as load timestamp
 
@@ -46,6 +47,8 @@ Use `MERGE` or an equivalent staging-table upsert pattern when:
 - the Gold Data Product is updated incrementally
 - business keys can identify changed records
 - downstream consumers expect stable serving objects
+
+For additive metrics such as counts and totals, the merge logic should update the final serving row with reconciled values for the affected business keys rather than overwrite long-lived totals with a single batch's partial aggregate.
 
 Append-only loading is acceptable only when the Gold Data Product is naturally append-only and that behavior is explicitly justified.
 

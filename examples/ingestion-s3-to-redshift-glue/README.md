@@ -38,7 +38,7 @@ It does not use DP-SP because the goal is to teach the enterprise baseline patte
 1. ISC lands the source file into an S3 Landing Zone path.
 2. A DP-EH Glue job reads the Landing Zone file.
 3. DP-EH writes Bronze, Silver, and Gold Apache Iceberg tables.
-4. DP-EH writes the current Gold-serving batch into a controlled S3 staging path for Redshift loading.
+4. DP-EH reconciles the current customer increment with the existing Iceberg Gold snapshot and writes the resulting serving increment into a controlled S3 staging path for Redshift loading.
 5. DDC loads that staged batch into Redshift by using a staging-table pattern with `COPY` and `MERGE`.
 6. DDC exposes the final Gold serving table, plus optional serving views or materialized views, to downstream consumers.
 
@@ -69,7 +69,7 @@ The Redshift table is populated only after the Gold-ready dataset has already be
 
 This example uses a realistic enterprise pattern:
 
-- Glue writes the current Gold-ready batch to a controlled S3 staging path
+- Glue writes the current serving increment for affected business keys to a controlled S3 staging path
 - DDC loads that batch into a Redshift staging table with `COPY`
 - DDC merges staged rows into the final Gold serving table by business key
 

@@ -6,7 +6,16 @@
 
 -- Architecture component: DDC - Data Distribution Center
 -- Serving layer: Gold
--- Note: this script assumes the Gold-ready batch has already been produced in DP-EH and staged in a controlled S3 location.
+-- Note: this script assumes the current Gold-serving increment has already been produced in DP-EH and staged in a controlled S3 location.
+
+create table if not exists ddc_gold.orders_gold (
+    customer_id varchar(256),
+    order_count integer,
+    total_order_value decimal(18,2),
+    last_order_timestamp timestamp,
+    load_batch_id varchar(64),
+    load_timestamp_utc timestamp
+);
 
 create table if not exists ddc_gold.orders_gold_stage (
     customer_id varchar(256),
@@ -28,9 +37,9 @@ merge into ddc_gold.orders_gold as target
 using ddc_gold.orders_gold_stage as source
 on target.customer_id = source.customer_id
 when matched then update set
-    order_count = source.order_count,
-    total_order_value = source.total_order_value,
-    last_order_timestamp = source.last_order_timestamp,
+    order_count = target.order_count + source.order_count,
+    total_order_value = target.total_order_value + source.total_order_value,
+    last_order_timestamp = greatest(target.last_order_timestamp, source.last_order_timestamp),
     load_batch_id = source.load_batch_id,
     load_timestamp_utc = source.load_timestamp_utc
 when not matched then insert (

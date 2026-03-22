@@ -21,6 +21,7 @@ provider "aws" {
 
 locals {
   name_prefix = "${var.project}-${var.environment}-${var.use_case}"
+  redshift_serverless_name = "${local.name_prefix}-ddc-gold"
 
   standard_tags = {
     repository      = "aws-data-platform-ai-template"
@@ -135,7 +136,7 @@ module "ddc_redshift_copy_role" {
   component              = "dcs"
   environment            = var.environment
   role_purpose           = "ddc-redshift-copy"
-  assume_role_principals = ["redshift.amazonaws.com"]
+  assume_role_principals = ["redshift.amazonaws.com", "redshift-serverless.amazonaws.com"]
   inline_policy_json     = data.aws_iam_policy_document.ddc_redshift_copy.json
 
   tags = {
@@ -146,7 +147,7 @@ module "ddc_redshift_copy_role" {
 }
 
 resource "aws_redshiftserverless_namespace" "ddc_gold" {
-  namespace_name      = "${replace(local.name_prefix, "-", "_")}_ddc_gold"
+  namespace_name      = local.redshift_serverless_name
   db_name             = var.redshift_database_name
   admin_username      = var.redshift_admin_username
   admin_user_password = var.redshift_admin_password
@@ -156,7 +157,7 @@ resource "aws_redshiftserverless_namespace" "ddc_gold" {
 }
 
 resource "aws_redshiftserverless_workgroup" "ddc_gold" {
-  workgroup_name       = "${replace(local.name_prefix, "-", "_")}_ddc_gold"
+  workgroup_name       = local.redshift_serverless_name
   namespace_name       = aws_redshiftserverless_namespace.ddc_gold.namespace_name
   base_capacity        = var.redshift_base_capacity
   publicly_accessible  = false

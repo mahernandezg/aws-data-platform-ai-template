@@ -70,6 +70,14 @@ def write_iceberg_table(dataframe, database_name: str, table_name: str) -> None:
     )
 
 
+def read_existing_gold_table(spark: SparkSession, database_name: str, table_name: str):
+    identifier = f"platform_catalog.{database_name}.{table_name}"
+    try:
+        return spark.table(identifier)
+    except Exception:
+        return None
+
+
 def build_bronze(landing_df):
     return landing_df.withColumn("medallion_layer", F.lit("bronze"))
 
@@ -83,7 +91,7 @@ def build_silver(bronze_df):
     )
 
 
-def build_gold(silver_df):
+def build_gold_increment(silver_df):
     return (
         silver_df.groupBy("customer_id")
         .agg(
@@ -94,6 +102,30 @@ def build_gold(silver_df):
         .withColumn("data_product_name", F.lit("customer_order_summary"))
         .withColumn("medallion_layer", F.lit("gold"))
     )
+
+
+def reconcile_gold_snapshot(existing_gold_df, gold_increment_df):
+    if existing_gold_df is None:
+        return gold_increment_df, gold_increment_df
+
+    affected_customers_df = gold_increment_df.select("customer_id").distinct()
+    unchanged_gold_df = existing_gold_df.join(affected_customers_df, "customer_id", "left_anti")
+    existing_affected_gold_df = existing_gold_df.join(affected_customers_df, "customer_id", "inner")
+
+    serving_increment_df = (
+        existing_affected_gold_df.unionByName(gold_increment_df)
+        .groupBy("customer_id")
+        .agg(
+            F.sum("order_count").cast("integer").alias("order_count"),
+            F.sum("total_order_amount").cast("decimal(18,2)").alias("total_order_amount"),
+            F.max("last_order_timestamp_utc").alias("last_order_timestamp_utc"),
+        )
+        .withColumn("data_product_name", F.lit("customer_order_summary"))
+        .withColumn("medallion_layer", F.lit("gold"))
+    )
+
+    full_gold_snapshot_df = unchanged_gold_df.unionByName(serving_increment_df)
+    return full_gold_snapshot_df, serving_increment_df
 
 
 def write_redshift_stage_extract(gold_df, redshift_stage_path: str, batch_id: str):
@@ -123,6 +155,17 @@ def build_redshift_sql(
 
     return f"""
 -- DDC serving pattern for final Gold load
+create table if not exists {redshift_database}.{redshift_schema}.{target_table} (
+    customer_id varchar(256),
+    order_count integer,
+    total_order_amount decimal(18,2),
+    last_order_timestamp_utc timestamp,
+    data_product_name varchar(256),
+    medallion_layer varchar(32),
+    load_batch_id varchar(64),
+    load_timestamp_utc timestamp
+);
+
 create table if not exists {redshift_database}.{redshift_schema}.{stage_table} (
     customer_id varchar(256),
     order_count integer,
@@ -186,13 +229,15 @@ def main() -> None:
     landing_df = read_landing_data(spark, args.source_path)
     bronze_df = build_bronze(landing_df)
     silver_df = build_silver(bronze_df)
-    gold_df = build_gold(silver_df)
+    gold_increment_df = build_gold_increment(silver_df)
+    existing_gold_df = read_existing_gold_table(spark, args.gold_database, f"{args.table_prefix}_gold")
+    gold_df, serving_increment_df = reconcile_gold_snapshot(existing_gold_df, gold_increment_df)
 
     write_iceberg_table(bronze_df, args.bronze_database, f"{args.table_prefix}_bronze")
     write_iceberg_table(silver_df, args.silver_database, f"{args.table_prefix}_silver")
     write_iceberg_table(gold_df, args.gold_database, f"{args.table_prefix}_gold")
 
-    staged_s3_path = write_redshift_stage_extract(gold_df, args.redshift_stage_path, batch_id)
+    staged_s3_path = write_redshift_stage_extract(serving_increment_df, args.redshift_stage_path, batch_id)
     redshift_sql = build_redshift_sql(
         args.redshift_database,
         args.redshift_schema,

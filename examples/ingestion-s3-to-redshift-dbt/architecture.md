@@ -21,8 +21,8 @@ The example does not use DP-SP because it is intentionally focused on the enterp
 2. A DP-EH Bronze Iceberg table is made available for transformation.
 3. dbt staging logic reads the Bronze-aligned source relation.
 4. dbt intermediate logic derives a Silver-aligned model.
-5. dbt curated logic derives an enterprise Gold-ready dataset.
-6. The Gold-ready dataset is staged for Redshift loading.
+5. dbt curated logic derives the current enterprise Gold-serving increment.
+6. That serving increment is staged for Redshift loading.
 7. DDC loads the staged increment into a Redshift staging table by using `COPY`.
 8. DDC merges the staged rows into the final Redshift Gold serving table.
 
@@ -57,8 +57,8 @@ That role is intentionally narrower than DP-EH processing. Redshift receives Gol
 
 This example uses a controlled incremental load pattern:
 
-- dbt produces the current Gold-ready batch outside Redshift
-- the batch is staged in S3 under a controlled Redshift load prefix
+- dbt produces the current Gold-serving increment outside Redshift
+- that serving increment is staged in S3 under a controlled Redshift load prefix
 - Redshift loads that batch into a staging table by using `COPY`
 - Redshift merges staged rows into the final target table by business key
 
