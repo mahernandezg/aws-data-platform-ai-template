@@ -289,7 +289,6 @@ Planned evolution includes:
 
 ## Author
 
-Created and maintained by Manuel Hernández Giuliani. <br>
-ManuelHernandezGiuliani.com
+Created and maintained by Manuel Hernández Giuliani.
 
 This repository represents a public engineering foundation for AWS data platform architecture and AI-assisted development workflows.
