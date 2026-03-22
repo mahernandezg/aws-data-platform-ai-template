@@ -1,0 +1,73 @@
+// License: Apache 2.0
+// Author: Manuel Hernandez Giuliani
+// Date Created: 2026-03-22
+// Date Modified: 2026-03-22
+// Purpose: DP-EH Step Functions starter that orchestrates one centralized processing flow over Apache Iceberg-managed data assets.
+// Architecture component: DP-EH - Data Processing Center - Enterprise Hub
+// Environment applicability: DIT, DEV, QA, PPRD, PRD
+// Notes:
+// - This JSONC starter is near-runnable. Remove comments or render it to JSON before deployment.
+// - This workflow coordinates enterprise-scale processing. It does not replace DDC as the governed distribution layer.
+// - Runtime access is assumed to use IAM Roles only.
+
+{
+  "Comment": "DP-EH centralized processing orchestration starter with enterprise transformation and governed publication handoff.",
+  "StartAt": "ValidateRequest",
+  "States": {
+    "ValidateRequest": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.source_database",
+              "IsPresent": true
+            },
+            {
+              "Variable": "$.source_table",
+              "IsPresent": true
+            }
+          ],
+          "Next": "RunEnterpriseTransformJob"
+        }
+      ],
+      "Default": "InvalidRequest"
+    },
+    "RunEnterpriseTransformJob": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "${dp_eh_glue_job_name}",
+        "Arguments": {
+          "--source_database.$": "$.source_database",
+          "--source_table.$": "$.source_table",
+          "--target_database": "${target_database}",
+          "--target_table": "${target_table}",
+          "--warehouse_path": "${warehouse_path}"
+        }
+      },
+      "Next": "RunQualityGate"
+    },
+    "RunQualityGate": {
+      "Type": "Pass",
+      "Parameters": {
+        "status": "validated",
+        "message": "Centralized processing completed and output remains governed as an Apache Iceberg-managed asset."
+      },
+      "Next": "SignalDistributionHandoff"
+    },
+    "SignalDistributionHandoff": {
+      "Type": "Pass",
+      "Parameters": {
+        "next_component": "DDC",
+        "handoff_intent": "Publish curated enterprise output for governed downstream distribution."
+      },
+      "End": true
+    },
+    "InvalidRequest": {
+      "Type": "Fail",
+      "Error": "InvalidInput",
+      "Cause": "The required source_database or source_table field was not provided."
+    }
+  }
+}

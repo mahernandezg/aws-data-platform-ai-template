@@ -1,0 +1,27 @@
+# License: Apache 2.0
+# Author: Manuel Hernandez Giuliani
+# Date Created: 2026-03-22
+# Date Modified: 2026-03-22
+# Purpose: Minimal dbt project starter for DP-EH or DP-SP transformations using staging, intermediate, and curated model conventions.
+# Architecture component: DP-EH or DP-SP
+
+name: "aws_data_platform_template"
+version: "1.0.0"
+config-version: 2
+
+profile: "aws_data_platform_template"
+
+model-paths: ["models"]
+
+models:
+  aws_data_platform_template:
+    +materialized: view
+    staging:
+      +schema: staging
+      +tags: ["staging"]
+    intermediate:
+      +schema: intermediate
+      +tags: ["intermediate"]
+    curated:
+      +schema: curated
+      +tags: ["curated"]
