@@ -49,7 +49,7 @@ def read_landing_data(glue_context: GlueContext, source_path: str):
 
     # Replace this parser with the source-specific schema required by the actual ingestion flow.
     return (
-        spark.read.option("header", True).json(source_path)
+        spark.read.json(source_path)
         .withColumn("landing_timestamp_utc", F.current_timestamp())
         .withColumn("landing_source_path", F.input_file_name())
     )

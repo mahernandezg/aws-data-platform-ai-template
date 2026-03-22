@@ -92,10 +92,10 @@ This example is designed to be:
 
 ## Environment Notes
 
-Read [environments.md](c:\Users\maher\OneDrive\Documentos\06_GitHub\aws-data-platform-ai-template\examples\ingestion-s3-to-iceberg-spark\environments.md) for how this example should be interpreted across DIT, DEV, QA, PPRD, and PRD.
+Read [environments.md](./environments.md) for how this example should be interpreted across DIT, DEV, QA, PPRD, and PRD.
 
 ## Related Files
 
-- [architecture-note.md](c:\Users\maher\OneDrive\Documentos\06_GitHub\aws-data-platform-ai-template\examples\ingestion-s3-to-iceberg-spark\architecture-note.md)
-- [main.tf](c:\Users\maher\OneDrive\Documentos\06_GitHub\aws-data-platform-ai-template\examples\ingestion-s3-to-iceberg-spark\terraform\main.tf)
-- [dp_eh_orders_medallion_job.py](c:\Users\maher\OneDrive\Documentos\06_GitHub\aws-data-platform-ai-template\examples\ingestion-s3-to-iceberg-spark\pyspark\dp_eh_orders_medallion_job.py)
+- [architecture-note.md](./architecture-note.md)
+- [main.tf](./terraform/main.tf)
+- [dp_eh_orders_medallion_job.py](./pyspark/dp_eh_orders_medallion_job.py)

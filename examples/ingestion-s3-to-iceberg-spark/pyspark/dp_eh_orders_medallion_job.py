@@ -49,7 +49,7 @@ def build_spark_session(warehouse_path: str) -> SparkSession:
 
 def read_landing_data(spark: SparkSession, source_path: str):
     return (
-        spark.read.option("header", True).json(source_path)
+        spark.read.json(source_path)
         .withColumn("landing_timestamp_utc", F.current_timestamp())
         .withColumn("landing_source_path", F.input_file_name())
     )
