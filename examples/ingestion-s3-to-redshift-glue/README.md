@@ -73,7 +73,7 @@ This example uses a realistic enterprise pattern:
 - DDC loads that batch into a Redshift staging table with `COPY`
 - DDC merges staged rows into the final Gold serving table by business key
 
-Read [redshift-loading.md](/c:/Users/maher/OneDrive/Documentos/06_GitHub/aws-data-platform-ai-template/examples/ingestion-s3-to-redshift-glue/redshift-loading.md) for the detailed loading pattern.
+Read [redshift-loading.md](./redshift-loading.md) for the detailed loading pattern.
 
 ## Expected Redshift Objects
 
@@ -103,7 +103,7 @@ examples/ingestion-s3-to-redshift-glue/
 
 ## Environment Notes
 
-Read [environments.md](/c:/Users/maher/OneDrive/Documentos/06_GitHub/aws-data-platform-ai-template/examples/ingestion-s3-to-redshift-glue/environments.md) for how this example should be interpreted across DIT, DEV, QA, PPRD, and PRD.
+Read [environments.md](./environments.md) for how this example should be interpreted across DIT, DEV, QA, PPRD, and PRD.
 
 ## IAM Roles Only Reminder
 

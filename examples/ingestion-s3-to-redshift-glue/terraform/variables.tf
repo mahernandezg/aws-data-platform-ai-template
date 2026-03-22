@@ -40,12 +40,6 @@ variable "redshift_admin_username" {
   default     = "platform_admin"
 }
 
-variable "redshift_admin_password" {
-  description = "Administrative password placeholder for the Redshift Serverless namespace."
-  type        = string
-  sensitive   = true
-}
-
 variable "redshift_base_capacity" {
   description = "Base capacity for the Redshift Serverless workgroup."
   type        = number

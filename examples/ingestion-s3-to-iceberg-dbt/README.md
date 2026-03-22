@@ -99,10 +99,10 @@ This example is designed to be:
 
 ## Environment Notes
 
-Read [environments.md](c:\Users\maher\OneDrive\Documentos\06_GitHub\aws-data-platform-ai-template\examples\ingestion-s3-to-iceberg-dbt\environments.md) for how this example should be interpreted across DIT, DEV, QA, PPRD, and PRD.
+Read [environments.md](./environments.md) for how this example should be interpreted across DIT, DEV, QA, PPRD, and PRD.
 
 ## Related Files
 
-- [architecture-note.md](c:\Users\maher\OneDrive\Documentos\06_GitHub\aws-data-platform-ai-template\examples\ingestion-s3-to-iceberg-dbt\architecture-note.md)
-- [main.tf](c:\Users\maher\OneDrive\Documentos\06_GitHub\aws-data-platform-ai-template\examples\ingestion-s3-to-iceberg-dbt\terraform\main.tf)
-- [dbt_project.yml](c:\Users\maher\OneDrive\Documentos\06_GitHub\aws-data-platform-ai-template\examples\ingestion-s3-to-iceberg-dbt\dbt\dbt_project.yml)
+- [architecture-note.md](./architecture-note.md)
+- [main.tf](./terraform/main.tf)
+- [dbt_project.yml](./dbt/dbt_project.yml)

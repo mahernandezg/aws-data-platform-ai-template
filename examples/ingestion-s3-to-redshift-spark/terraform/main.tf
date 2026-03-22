@@ -37,14 +37,87 @@ resource "aws_s3_bucket" "isc_landing" {
   tags   = merge(local.standard_tags, { architecture_component = "ISC" })
 }
 
+resource "aws_s3_bucket_public_access_block" "isc_landing" {
+  bucket = aws_s3_bucket.isc_landing.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "isc_landing" {
+  bucket = aws_s3_bucket.isc_landing.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
 resource "aws_s3_bucket" "platform_warehouse" {
   bucket = "${local.name_prefix}-iceberg-warehouse"
   tags   = merge(local.standard_tags, { architecture_component = "DP-EH" })
 }
 
+resource "aws_s3_bucket_public_access_block" "platform_warehouse" {
+  bucket = aws_s3_bucket.platform_warehouse.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "platform_warehouse" {
+  bucket = aws_s3_bucket.platform_warehouse.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "platform_warehouse" {
+  bucket = aws_s3_bucket.platform_warehouse.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket" "redshift_stage" {
   bucket = "${local.name_prefix}-redshift-stage"
   tags   = merge(local.standard_tags, { architecture_component = "DDC" })
+}
+
+resource "aws_s3_bucket_public_access_block" "redshift_stage" {
+  bucket = aws_s3_bucket.redshift_stage.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "redshift_stage" {
+  bucket = aws_s3_bucket.redshift_stage.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_versioning" "redshift_stage" {
+  bucket = aws_s3_bucket.redshift_stage.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_glue_catalog_database" "bronze" {
@@ -147,11 +220,11 @@ module "ddc_redshift_copy_role" {
 }
 
 resource "aws_redshiftserverless_namespace" "ddc_gold" {
-  namespace_name      = local.redshift_serverless_name
-  db_name             = var.redshift_database_name
-  admin_username      = var.redshift_admin_username
-  admin_user_password = var.redshift_admin_password
-  iam_roles           = [module.ddc_redshift_copy_role.role_arn]
+  namespace_name        = local.redshift_serverless_name
+  db_name               = var.redshift_database_name
+  admin_username        = var.redshift_admin_username
+  manage_admin_password = true
+  iam_roles             = [module.ddc_redshift_copy_role.role_arn]
 
   tags = merge(local.standard_tags, { architecture_component = "DDC" })
 }

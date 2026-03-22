@@ -25,7 +25,7 @@ variable "role_purpose" {
 }
 
 variable "assume_role_principals" {
-  description = "AWS service principals or trusted principal identifiers allowed to assume the role."
+  description = "AWS service principals allowed to assume the role."
   type        = list(string)
 }
 

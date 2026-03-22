@@ -75,7 +75,7 @@ This example uses a realistic enterprise pattern:
 
 This pattern keeps processing outside Redshift while allowing incremental updates to the final serving table.
 
-Read [redshift-loading.md](/c:/Users/maher/OneDrive/Documentos/06_GitHub/aws-data-platform-ai-template/examples/ingestion-s3-to-redshift-spark/redshift-loading.md) for the detailed loading pattern.
+Read [redshift-loading.md](./redshift-loading.md) for the detailed loading pattern.
 
 ## Expected Redshift Objects
 
@@ -105,7 +105,7 @@ examples/ingestion-s3-to-redshift-spark/
 
 ## Environment Notes
 
-Read [environments.md](/c:/Users/maher/OneDrive/Documentos/06_GitHub/aws-data-platform-ai-template/examples/ingestion-s3-to-redshift-spark/environments.md) for how this example should be interpreted across DIT, DEV, QA, PPRD, and PRD.
+Read [environments.md](./environments.md) for how this example should be interpreted across DIT, DEV, QA, PPRD, and PRD.
 
 ## IAM Roles Only Reminder
 
@@ -128,7 +128,7 @@ The introduction of Redshift does not remove Apache Iceberg from the platform st
 
 ## Related Files
 
-- [architecture.md](/c:/Users/maher/OneDrive/Documentos/06_GitHub/aws-data-platform-ai-template/examples/ingestion-s3-to-redshift-spark/architecture.md)
-- [redshift-loading.md](/c:/Users/maher/OneDrive/Documentos/06_GitHub/aws-data-platform-ai-template/examples/ingestion-s3-to-redshift-spark/redshift-loading.md)
-- [main.tf](/c:/Users/maher/OneDrive/Documentos/06_GitHub/aws-data-platform-ai-template/examples/ingestion-s3-to-redshift-spark/terraform/main.tf)
-- [dp_eh_orders_redshift_serving_job.py](/c:/Users/maher/OneDrive/Documentos/06_GitHub/aws-data-platform-ai-template/examples/ingestion-s3-to-redshift-spark/pyspark/dp_eh_orders_redshift_serving_job.py)
+- [architecture.md](./architecture.md)
+- [redshift-loading.md](./redshift-loading.md)
+- [main.tf](./terraform/main.tf)
+- [dp_eh_orders_redshift_serving_job.py](./pyspark/dp_eh_orders_redshift_serving_job.py)

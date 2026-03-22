@@ -151,10 +151,10 @@ The explicit component-aligned account groups are:
 
 This means:
 
-- ISC does not have DIT
-- DP-EH does not have DIT
-- DDC does not have DIT
-- DP-SP does not have DIT
+- ISC does not have component-owned DIT accounts
+- DP-EH does not have component-owned DIT accounts
+- DDC does not have component-owned DIT accounts
+- DP-SP does not have component-owned DIT accounts
 - DP-SP does not have QA
 
 DCS remains the shared control and governance layer across these isolated account boundaries. In this repository, DCS is treated as a cross-cutting control plane concern rather than as a separately enumerated component-owned account family.

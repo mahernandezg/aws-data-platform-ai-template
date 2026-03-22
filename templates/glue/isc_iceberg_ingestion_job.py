@@ -45,7 +45,7 @@ def extract_source(glue_context: GlueContext, source_path: str):
 
     # Replace this read pattern with the source-specific parser required by the ingestion use case.
     return (
-        spark.read.option("header", True).json(source_path)
+        spark.read.json(source_path)
         .withColumn("ingestion_timestamp_utc", F.current_timestamp())
         .withColumn("record_source_path", F.input_file_name())
     )

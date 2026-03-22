@@ -149,7 +149,7 @@ For shell-style comments:
 
 ```bash
 # License: Apache 2.0
-# Author: Manuel Hernández Giuliani
+# Author: Manuel Hernandez Giuliani
 # Date Created: YYYY-MM-DD
 # Date Modified: YYYY-MM-DD
 # Purpose: Short clear description of what the code or script does
@@ -159,7 +159,7 @@ For Python-style comments:
 
 ```python
 # License: Apache 2.0
-# Author: Manuel Hernández Giuliani
+# Author: Manuel Hernandez Giuliani
 # Date Created: YYYY-MM-DD
 # Date Modified: YYYY-MM-DD
 # Purpose: Short clear description of what the code or script does
@@ -169,7 +169,7 @@ For SQL-style comments:
 
 ```sql
 -- License: Apache 2.0
--- Author: Manuel Hernández Giuliani
+-- Author: Manuel Hernandez Giuliani
 -- Date Created: YYYY-MM-DD
 -- Date Modified: YYYY-MM-DD
 -- Purpose: Short clear description of what the code or script does
@@ -179,7 +179,7 @@ For Terraform-style comments:
 
 ```hcl
 # License: Apache 2.0
-# Author: Manuel Hernández Giuliani
+# Author: Manuel Hernandez Giuliani
 # Date Created: YYYY-MM-DD
 # Date Modified: YYYY-MM-DD
 # Purpose: Short clear description of what the code or script does
@@ -377,7 +377,7 @@ Unless explicitly told otherwise:
 
 - assume AWS is the target cloud
 - assume Apache 2.0 is the repository license
-- assume Manuel Hernández Giuliani is the author
+- assume Manuel Hernandez Giuliani is the author
 - assume all generated code must include the mandatory header
 - assume outputs should strengthen a public reusable template
 - assume enterprise-grade quality is expected
