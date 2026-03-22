@@ -1,0 +1,73 @@
+# License: Apache 2.0
+# Author: Manuel Hernandez Giuliani
+# Date Created: 2026-03-22
+# Date Modified: 2026-03-22
+# Purpose: Shared DCS observability baseline starter with logging, metrics, lineage, and audit placeholders for platform workloads.
+
+template_name: dcs_observability_baseline
+
+architecture:
+  component: DCS
+  environment_applicability:
+    - DIT
+    - DEV
+    - QA
+    - PPRD
+    - PRD
+  notes:
+    - Shared observability support pattern for ISC, DP-EH, DP-SP, and DDC workloads.
+    - Runtime and operational access is assumed to use IAM Roles only.
+
+baseline:
+  logs:
+    required_fields:
+      - environment
+      - architecture_component
+      - workload_name
+      - run_id
+      - source_identifier
+      - target_identifier
+      - status
+      - event_timestamp_utc
+  metrics:
+    placeholders:
+      - records_read
+      - records_written
+      - rejected_records
+      - processing_duration_seconds
+      - data_quality_failures
+  lineage:
+    placeholders:
+      - source_path_or_table
+      - target_path_or_table
+      - batch_id
+      - run_id
+      - transformation_owner
+  audit:
+    required_signals:
+      - execution_started
+      - execution_completed
+      - execution_failed
+      - access_context_recorded
+
+integration_guidance:
+  isc:
+    focus:
+      - ingestion traceability
+      - landing_zone lineage
+      - source handoff visibility
+  dp_eh:
+    focus:
+      - bronze_silver_gold progression
+      - enterprise transformation metrics
+      - batch and run traceability
+  dp_sp:
+    focus:
+      - domain-owned execution traceability
+      - spoke-specific data quality signals
+      - governed publication handoff
+  ddc:
+    focus:
+      - gold serving visibility
+      - consumer-facing access auditability
+      - controlled AI exception visibility where applicable

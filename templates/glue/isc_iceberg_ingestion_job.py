@@ -11,6 +11,7 @@ Notes:
 - This starter assumes IAM Roles only.
 - This starter assumes Apache Iceberg is the mandatory table format from ISC onward.
 - This starter is intentionally near-runnable and expects job arguments, catalog configuration, and source parsing logic to be completed by the implementing team.
+- Extend the starter with explicit lineage and observability integration rather than hiding those concerns in undocumented helper code.
 """
 
 import sys
@@ -44,6 +45,7 @@ def extract_source(glue_context: GlueContext, source_path: str):
     spark = glue_context.spark_session
 
     # Replace this read pattern with the source-specific parser required by the ingestion use case.
+    # Preserve source traceability fields so downstream Bronze standardization remains lineage-aware.
     return (
         spark.read.json(source_path)
         .withColumn("ingestion_timestamp_utc", F.current_timestamp())
@@ -74,6 +76,9 @@ def main() -> None:
 
     configure_spark(glue_context, args["warehouse_path"])
     source_df = extract_source(glue_context, args["source_path"])
+
+    # Emit workload metrics, audit markers, or lineage events here if your implementation
+    # integrates with CloudWatch, Lake Formation audit flows, or a shared DCS observability baseline.
     load_to_iceberg(source_df, args["target_database"], args["target_table"])
 
     job.commit()

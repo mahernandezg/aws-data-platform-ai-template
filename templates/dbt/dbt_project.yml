@@ -4,6 +4,11 @@
 # Date Modified: 2026-03-22
 # Purpose: Minimal dbt project starter for DP-EH or DP-SP transformations using staging, intermediate, and curated model conventions.
 # Architecture component: DP-EH or DP-SP
+# Environment applicability: DIT, DEV, QA, PPRD, PRD for DP-EH and DIT, DEV, PPRD, PRD for DP-SP
+# Notes:
+# - IAM Roles only are assumed for runtime execution and access.
+# - Apache Iceberg remains the standard table format from ISC onward.
+# - Preserve lineage and observability intent in model comments and downstream orchestration.
 
 name: "aws_data_platform_template"
 version: "1.0.0"

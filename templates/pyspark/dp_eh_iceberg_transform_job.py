@@ -11,6 +11,7 @@ Notes:
 - This starter assumes IAM Roles only.
 - This starter assumes Apache Iceberg is the mandatory table format from ISC onward.
 - This starter is written for enterprise-scale centralized processing, not DDC serving logic.
+- Extend the starter with explicit lineage and observability integration rather than hiding those concerns in undocumented helper code.
 """
 
 import argparse
@@ -79,6 +80,9 @@ def main() -> None:
 
     source_df = read_source_table(spark, args.source_database, args.source_table)
     curated_df = transform(source_df)
+
+    # Emit workload metrics, audit markers, or lineage events here if your implementation
+    # integrates with a shared DCS observability baseline.
     write_target_table(curated_df, args.target_database, args.target_table)
 
     LOGGER.info("Completed DP-EH Iceberg transform for %s.%s", args.target_database, args.target_table)
