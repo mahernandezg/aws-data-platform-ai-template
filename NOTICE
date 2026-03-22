@@ -1,0 +1,13 @@
+aws-data-platform-ai-template
+
+Copyright 2026 Manuel Hernández Giuliani
+
+This repository provides a generic, reusable framework for AWS data platform architecture and AI-assisted engineering workflows.
+
+Important:
+- This repository contains no confidential or proprietary enterprise information.
+- Any enterprise-specific implementation must be done in a separate private repository.
+- Use of this repository inside organizations must comply with internal policies and legal requirements.
+
+Author:
+Manuel Hernández Giuliani
