@@ -1,0 +1,75 @@
+// License: Apache 2.0
+// Author: Manuel Hernandez Giuliani
+// Date Created: 2026-03-22
+// Date Modified: 2026-03-22
+// Purpose: DP-SP Step Functions starter that orchestrates one spoke-owned distributed processing flow over Apache Iceberg-managed data assets.
+// Architecture component: DP-SP - Data Processing Center - Spoke
+// Environment applicability: DIT, DEV, PPRD, PRD
+// Notes:
+// - This JSONC starter is near-runnable. Remove comments or render it to JSON before deployment.
+// - DP-SP does not use QA in this repository.
+// - This workflow coordinates spoke processing within shared governance and does not replace DDC as the governed distribution layer.
+// - Runtime access is assumed to use IAM Roles only.
+
+{
+  "Comment": "DP-SP distributed processing orchestration starter with domain-owned transformation and governed publication handoff.",
+  "StartAt": "ValidateRequest",
+  "States": {
+    "ValidateRequest": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.domain_name",
+              "IsPresent": true
+            },
+            {
+              "Variable": "$.source_table",
+              "IsPresent": true
+            }
+          ],
+          "Next": "RunSpokeTransformJob"
+        }
+      ],
+      "Default": "InvalidRequest"
+    },
+    "RunSpokeTransformJob": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "${dp_sp_glue_job_name}",
+        "Arguments": {
+          "--domain_name.$": "$.domain_name",
+          "--source_table.$": "$.source_table",
+          "--target_database": "${target_database}",
+          "--target_table": "${target_table}",
+          "--warehouse_path": "${warehouse_path}"
+        }
+      },
+      "Next": "RecordDomainOutput"
+    },
+    "RecordDomainOutput": {
+      "Type": "Pass",
+      "Parameters": {
+        "status": "completed",
+        "message": "Spoke-owned processing completed and output remains governed as an Apache Iceberg-managed asset.",
+        "domain_name.$": "$.domain_name"
+      },
+      "Next": "SignalDistributionHandoff"
+    },
+    "SignalDistributionHandoff": {
+      "Type": "Pass",
+      "Parameters": {
+        "next_component": "DDC",
+        "handoff_intent": "Publish domain-owned output for governed downstream distribution."
+      },
+      "End": true
+    },
+    "InvalidRequest": {
+      "Type": "Fail",
+      "Error": "InvalidInput",
+      "Cause": "The required domain_name or source_table field was not provided."
+    }
+  }
+}

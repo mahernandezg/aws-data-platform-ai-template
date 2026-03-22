@@ -22,7 +22,7 @@ DIT should be treated as a learning and shaping environment. It helps reduce unc
 
 ## Scope of Usage
 
-DIT applies to all architecture components in this repository:
+DIT is available as shared experimentation capacity for all architecture components in this repository:
 
 - ISC
 - DP-EH
@@ -30,7 +30,7 @@ DIT applies to all architecture components in this repository:
 - DCS
 - DDC
 
-Why all components use DIT:
+Why all components can use DIT:
 
 - ISC uses DIT to explore source-entry patterns and early Ingestion behavior.
 - DP-EH uses DIT to assess Centralized Processing concepts and shared Transformation patterns.
@@ -39,6 +39,25 @@ Why all components use DIT:
 - DDC uses DIT to trial governed Distribution patterns and controlled downstream exposure concepts.
 
 DIT is therefore a platform-wide exploratory environment, not a component-specific exception space.
+
+## Account and Region Model
+
+DIT does not use dedicated component-owned AWS accounts.
+
+Instead, DIT consists only of four shared experimentation accounts:
+
+- DIT-1
+- DIT-2
+- DIT-3
+- DIT-4
+
+These accounts are shared by platform users for experimentation.
+
+Region scope for DIT is:
+
+- eu-west-1 only
+
+DIT does not exist in us-east-1. It is not a controlled multi-region environment in the same way as DEV, QA, PPRD, or PRD.
 
 ## Types of Workloads
 
@@ -90,6 +109,7 @@ Expected controls in DIT include:
 
 - basic alignment with architecture boundaries
 - explicit identification of the component being explored
+- explicit respect for Medallion layer ownership, even in proof-of-concept work
 - controlled use of Metadata where relevant
 - traceability of experiments that influence future design decisions
 - access controls appropriate to exploratory workloads
@@ -159,9 +179,12 @@ DIT is not:
 - a production-like validation stage
 - a place to host stable downstream consumer workloads
 - an excuse to ignore Data Governance, security, Metadata, or architecture boundaries
+- a place to ignore Landing Zone, Bronze, Silver, Gold, or DDC exposure boundaries because the work is exploratory
+- a dedicated component-owned AWS account group
+- a multi-region controlled environment
 
 DIT must remain an exploratory environment with architectural discipline, not a permanent holding area for unfinished platform capabilities.
 
 ## Summary
 
-DIT is the sandbox environment of the Data Platform. It exists to support controlled experimentation, proof-of-concept work, and early architectural validation across ISC, DP-EH, DP-SP, DCS, and DDC before work advances into more structured development and governed lifecycle stages.
+DIT is the sandbox environment of the Data Platform. It exists to support controlled experimentation, proof-of-concept work, and early architectural validation through four shared eu-west-1-only experimentation accounts before work advances into controlled, account-isolated environments.

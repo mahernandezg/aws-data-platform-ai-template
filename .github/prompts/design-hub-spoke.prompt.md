@@ -30,11 +30,13 @@ Mandatory platform standards:
 - IAM Roles only
 - no IAM Users
 - Apache Iceberg is the standard Open Table Format from ISC onward
+- Medallion naming and ownership are mandatory from Landing Zone through Gold
 - Redshift is only for serving final Data Products, not for large-scale processing
 - DP-EH favors Spark, Glue, and dbt for enterprise-scale processing
 - DP-SP may use the same industrialized stack or lighter tools such as Glue Studio and DataBrew
 - DDC supports both Redshift and S3 plus Apache Iceberg plus Athena consumption
 - SageMaker Unified Studio in DDC is limited to discovery and interaction, not processing
+- DDC exposes Gold to consumers by default, with AI-oriented access to Bronze, Silver, or Gold allowed only as a controlled exception
 
 When responding:
 
@@ -51,6 +53,7 @@ Do not:
 - invent new architecture components
 - rename repository components
 - blur DCS, DP-EH, DP-SP, ISC, and DDC responsibilities
+- blur Landing Zone, Bronze, Silver, and Gold ownership
 - treat Redshift as a processing engine
 - treat non-Iceberg tables as the default pattern
 

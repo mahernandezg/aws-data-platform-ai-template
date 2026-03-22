@@ -40,6 +40,13 @@ Use these environment names exactly:
 
 DP-SP does not use QA. Do not describe QA as universally applicable across all components.
 
+Use these Medallion terms exactly when relevant:
+
+- Landing Zone
+- Bronze
+- Silver
+- Gold
+
 ## Mandatory Platform Standards
 
 These rules are non-negotiable:
@@ -47,6 +54,11 @@ These rules are non-negotiable:
 - IAM uses IAM Roles only.
 - IAM Users are not used in the platform.
 - Apache Iceberg is the standard Open Table Format from ISC onward.
+- ISC owns the Landing Zone only.
+- DP-EH owns enterprise Bronze, Silver, and Gold processing.
+- DP-SP owns spoke Bronze and Silver processing, plus Gold only for domain-specific Data Products or enhancements of DP-EH Gold outputs.
+- DDC exposes Gold Data Products to consumers by default.
+- AI-oriented access to Bronze, Silver, or Gold is a controlled exception, not the default consumer pattern.
 - Amazon Redshift is used only to store and serve final Data Products.
 - Amazon Redshift is not a large-scale processing engine.
 - DP-EH favors Spark, Glue, and dbt for enterprise-scale processing.
@@ -63,6 +75,7 @@ These rules are non-negotiable:
 - Do not turn DDC into a processing layer.
 - Do not turn DP-EH into a catch-all for every workload.
 - Do not describe DP-SP as an exception path outside governance.
+- Do not blur Landing Zone, Bronze, Silver, Gold, and DDC exposure responsibilities.
 
 ## Writing Rules
 

@@ -26,9 +26,11 @@ Mandatory rules:
 - use IAM Roles only
 - do not use IAM Users
 - standardize landed and processed data in Apache Iceberg from ISC onward
+- identify whether the job supports Landing Zone, Bronze, Silver, or Gold responsibilities
 - do not use Amazon Redshift as the main processing engine
 - in DP-EH, favor Spark, Glue, and dbt-compatible processing patterns for enterprise-scale workloads
 - in DP-SP, allow either industrialized Glue and Spark patterns or lighter spoke-oriented approaches where appropriate
+- keep DP-EH Gold ownership distinct from DP-SP Gold ownership
 - preserve Metadata, Data Lineage, Data Quality, and Observability expectations
 
 If code is requested:
@@ -54,3 +56,4 @@ Do not:
 - describe IAM Users as valid runtime identities
 - use Redshift as the transformation engine
 - blur ISC, DP-EH, and DP-SP responsibilities
+- blur Landing Zone, Bronze, Silver, and Gold ownership

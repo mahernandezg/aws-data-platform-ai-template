@@ -52,6 +52,159 @@ It contains all architecture components, all environment concepts, and all platf
 Constraints (if applicable):
 In this repository, the Data Platform must be documented as a reusable public template and must not assume confidential enterprise processes or internal-only operating models.
 
+## AWS Account Boundary
+
+Definition:
+The architectural boundary created by using a dedicated AWS account to isolate a defined environment scope, component scope, or shared experimentation scope.
+
+Context in This Repository:
+In this repository, AWS Account Boundaries are part of the platform design. DEV, QA, PPRD, and PRD use isolated AWS account boundaries. ISC, DP-EH, DP-SP, and DDC each have explicit component-aligned account groups for the environments they support. DIT uses a separate shared-account model rather than component-owned account boundaries.
+
+Responsibilities / Role:
+It is responsible for creating clear isolation between controlled environments, limiting blast radius, and supporting governed separation between major runtime scopes.
+
+Relationships:
+It connects directly to Environment Account Isolation, Shared DIT Accounts, Multi-Region Deployment, ISC, DP-EH, DP-SP, DDC, DCS, DEV, QA, PPRD, and PRD.
+
+Constraints (if applicable):
+An AWS Account Boundary in this repository must be described at architecture level only. It must not imply undocumented landing-zone internals, network topology, SCP structure, or organization-specific foundation design.
+
+## Environment Account Isolation
+
+Definition:
+The rule that each controlled environment operates in its own isolated AWS account scope rather than sharing one general account across the entire platform lifecycle.
+
+Context in This Repository:
+In this repository, DEV, QA, PPRD, and PRD are isolated by AWS account. ISC, DP-EH, and DDC each have dedicated account groups for DEV, QA, PPRD, and PRD. DP-SP has dedicated account groups for DEV, PPRD, and PRD only because DP-SP does not use QA. DCS remains the shared control and governance layer across those isolated controlled-environment account boundaries.
+
+Responsibilities / Role:
+It is responsible for making controlled-environment separation explicit and for preventing architecture drift between exploratory, development, validation, pre-production, and production scopes.
+
+Relationships:
+It connects directly to AWS Account Boundary, DEV, QA, PPRD, PRD, ISC, DP-EH, DP-SP, DDC, and DCS.
+
+Constraints (if applicable):
+Environment Account Isolation does not apply to DIT in the same way as controlled environments. It must not be described as a generic claim that every component owns every environment account.
+
+## Shared DIT Accounts
+
+Definition:
+The small shared pool of experimentation accounts used for sandbox work before changes enter controlled component-owned environment boundaries.
+
+Context in This Repository:
+In this repository, DIT is not component-owned. There are only four shared DIT accounts in total: DIT-1, DIT-2, DIT-3, and DIT-4. They are shared by platform users for experimentation and exist only in eu-west-1.
+
+Responsibilities / Role:
+They are responsible for providing controlled shared experimentation capacity without creating permanent component-owned DIT account groups.
+
+Relationships:
+They connect directly to DIT, AWS Account Boundary, Environment Account Isolation, Region Scope, Multi-Region Deployment, ISC, DP-EH, DP-SP, DCS, and DDC.
+
+Constraints (if applicable):
+Shared DIT Accounts must not be treated as production-like controlled environment accounts. They are exploratory only, region-limited to eu-west-1, and do not create dedicated DIT ownership for ISC, DP-EH, DP-SP, DCS, or DDC.
+
+## Multi-Region Deployment
+
+Definition:
+The architectural capability in which the platform operates across more than one AWS region in a deliberate and governed way.
+
+Context in This Repository:
+In this repository, multi-region is a required architecture characteristic. The controlled platform operates in both us-east-1 and eu-west-1. ISC, DP-EH, DP-SP, and DDC participate in both regions for controlled environments. Shared DIT Accounts exist only in eu-west-1.
+
+Responsibilities / Role:
+It is responsible for making region participation explicit in the architecture rather than leaving it as an informal aspiration.
+
+Relationships:
+It connects directly to Region Scope, AWS Account Boundary, Shared DIT Accounts, ISC, DP-EH, DP-SP, DDC, DEV, QA, PPRD, and PRD.
+
+Constraints (if applicable):
+Multi-Region Deployment in this repository must remain architecture-level. It must not imply undocumented replication mechanisms, network design, disaster-recovery topology, or organization-specific operating procedures.
+
+## Region Scope
+
+Definition:
+The explicit statement of which AWS regions are in scope for a platform environment, component group, or experimentation boundary.
+
+Context in This Repository:
+In this repository, us-east-1 hosts ISC, DP-EH, DP-SP, and DDC for controlled platform operation. eu-west-1 hosts ISC, DP-EH, DP-SP, and DDC for controlled platform operation and also hosts the four shared DIT accounts. DIT therefore exists only in eu-west-1.
+
+Responsibilities / Role:
+It is responsible for keeping region participation precise and understandable across environments and architecture components.
+
+Relationships:
+It connects directly to Multi-Region Deployment, Shared DIT Accounts, AWS Account Boundary, ISC, DP-EH, DP-SP, DDC, DIT, DEV, QA, PPRD, and PRD.
+
+Constraints (if applicable):
+Region Scope must not be described vaguely. If a region is not in scope for a given environment model in this repository, it should not be implied.
+
+## Landing Zone
+
+Definition:
+The initial platform entry layer where newly ingested source data is received before Medallion processing begins.
+
+Context in This Repository:
+In this repository, the Landing Zone belongs to ISC and is limited to raw data Ingestion behavior. It is the controlled point where source-aligned data first enters the Data Platform before Bronze standardization in DP-EH or DP-SP.
+
+Responsibilities / Role:
+It is responsible for receiving ingested source data, preserving source traceability, and supporting controlled handoff into downstream Medallion layers.
+
+Relationships:
+It connects directly to ISC, Ingestion, Metadata, Data Lineage, Bronze, DCS, and DDC.
+
+Constraints (if applicable):
+The Landing Zone is not a Medallion layer beyond platform entry. It must not be treated as a Transformation layer, a consumer-facing Distribution layer, or a substitute for Bronze standardization.
+
+## Bronze
+
+Definition:
+The first Medallion layer in which ingested data is standardized into platform-managed structures while remaining close to source meaning and source granularity.
+
+Context in This Repository:
+Bronze is implemented in DP-EH or DP-SP after data enters through ISC. In DP-EH, Bronze supports enterprise-standardized raw structures. In DP-SP, Bronze supports domain-specific ingestion and standardization within shared platform governance. Bronze data must align with the Apache Iceberg standard.
+
+Responsibilities / Role:
+It is responsible for converting ingested data into governed, standardized raw structures suitable for downstream processing while preserving source traceability.
+
+Relationships:
+It connects directly to Landing Zone, Silver, DP-EH, DP-SP, Apache Iceberg-standardized data structures, Metadata, Data Lineage, and Data Quality.
+
+Constraints (if applicable):
+Bronze is not the Landing Zone and not a consumer-facing layer. It must not be treated as an ungoverned raw file area, and it must remain standardized according to repository platform rules.
+
+## Silver
+
+Definition:
+The Medallion layer in which Bronze data is incrementally transformed into cleansed, structured, unified, and ACID-managed datasets suitable for reliable downstream modeling and reuse.
+
+Context in This Repository:
+In DP-EH, Silver represents enterprise-scale unified processing, including incremental processing and shared data structures such as SCD Type 2 patterns where relevant. In DP-SP, Silver represents domain-level Transformation within spoke ownership. Silver data must align with the Apache Iceberg standard.
+
+Responsibilities / Role:
+It is responsible for improving quality, consistency, structure, and reuse value beyond Bronze while preparing data for Gold Data Product modeling.
+
+Relationships:
+It connects directly to Bronze, Gold, DP-EH, DP-SP, Centralized Processing, Distributed Processing, Data Quality, Data Lineage, and Data Product preparation.
+
+Constraints (if applicable):
+Silver is not the consumer-serving layer. It must not be treated as final Distribution output, and its ownership must remain clear between enterprise-shared processing in DP-EH and domain-specific processing in DP-SP.
+
+## Gold
+
+Definition:
+The Medallion layer in which processed data is modeled into final Data Product structures intended for governed downstream use.
+
+Context in This Repository:
+In DP-EH, Gold represents enterprise Data Products, including star-schema modeling, dimension and fact structures, and SCD Type 2 patterns where relevant. In DP-SP, Gold is limited to domain-specific Data Products or domain-specific enhancements of DP-EH Gold Data Products. DDC exposes Gold Data Products to consumers and does not own Gold processing. AI-oriented access may use Bronze, Silver, or Gold only as a controlled exception.
+
+Responsibilities / Role:
+It is responsible for producing governed final Data Product structures ready for Distribution and consumption.
+
+Relationships:
+It connects directly to Silver, Data Product, DP-EH, DP-SP, DDC, Distribution, Data Contract, and consumer-serving patterns.
+
+Constraints (if applicable):
+Gold must not create ambiguity between enterprise-wide canonical Data Products in DP-EH and domain-specific Gold outputs in DP-SP. DDC may expose Gold assets but must not become the processing owner of Gold. In the default platform pattern, DDC exposes Gold only to consumers, with AI-oriented access to Bronze, Silver, or Gold treated as an explicit controlled exception.
+
 ## Data Product
 
 Definition:
@@ -432,16 +585,16 @@ Definition:
 The sandbox environment used for early experimentation, controlled technical trials, and initial validation of platform changes.
 
 Context in This Repository:
-DIT is the earliest environment in the repository model and is used by ISC, DP-EH, DP-SP, DCS, and DDC.
+DIT is the earliest environment in the repository model. It is available as shared experimentation capacity for ISC, DP-EH, DP-SP, DCS, and DDC, but it is not owned through dedicated component-aligned DIT account groups. The repository defines only four shared DIT accounts, and they exist only in eu-west-1.
 
 Responsibilities / Role:
 It is responsible for supporting low-risk experimentation and early engineering feedback before changes move into more structured development flows.
 
 Relationships:
-It connects to DEV, the broader environment model, and all architecture components.
+It connects to Shared DIT Accounts, Region Scope, DEV, the broader environment model, and all architecture components.
 
 Constraints (if applicable):
-DIT is not a substitute for later validation stages. It supports early iteration, not release confidence by itself.
+DIT is not a substitute for later validation stages. It supports early iteration, not release confidence by itself, and it must not be described as a dedicated component-owned AWS account boundary.
 
 ## DEV
 
@@ -449,16 +602,16 @@ Definition:
 The development environment used to build, integrate, and iteratively refine platform capabilities under active engineering change.
 
 Context in This Repository:
-DEV is used by all major architecture components and serves as the core engineering environment after DIT.
+DEV is used by all major architecture components and serves as the core engineering environment after DIT. DEV is part of the controlled environment model and therefore operates through isolated AWS account boundaries rather than through the shared DIT account pool.
 
 Responsibilities / Role:
 It is responsible for enabling active development, technical integration, and structured progression toward validation stages.
 
 Relationships:
-It connects to DIT, QA, PPRD, PRD, and all architecture components.
+It connects to DIT, QA, PPRD, PRD, Environment Account Isolation, Region Scope, and all architecture components.
 
 Constraints (if applicable):
-DEV should not be treated as the final validation stage for production readiness.
+DEV should not be treated as the final validation stage for production readiness. In this repository, DEV also implies isolated controlled-environment AWS accounts rather than shared experimentation accounts.
 
 ## QA
 
@@ -466,16 +619,16 @@ Definition:
 The quality-assurance environment used to validate behavior, integration, and release confidence for components that require a dedicated QA stage.
 
 Context in This Repository:
-QA applies to ISC, DP-EH, DCS, and DDC. It does not apply to DP-SP.
+QA applies to ISC, DP-EH, DCS, and DDC. It does not apply to DP-SP. QA is part of the controlled environment model and therefore operates through isolated AWS account boundaries rather than through the shared DIT account pool.
 
 Responsibilities / Role:
 It is responsible for structured quality validation before changes progress to pre-production and production-like use.
 
 Relationships:
-It connects to DEV, PPRD, Data Quality, and the components that use the shared QA stage.
+It connects to DEV, PPRD, Data Quality, Environment Account Isolation, Region Scope, and the components that use the shared QA stage.
 
 Constraints (if applicable):
-DP-SP does not use QA in this repository. QA must therefore not be described as universally applicable across all architecture components.
+DP-SP does not use QA in this repository. QA must therefore not be described as universally applicable across all architecture components, and it must not be described as available through shared DIT accounts.
 
 ## PPRD
 
@@ -483,16 +636,16 @@ Definition:
 The pre-production environment used to validate release readiness under conditions that closely resemble production expectations.
 
 Context in This Repository:
-PPRD is used by all architecture components, including DP-SP.
+PPRD is used by all architecture components, including DP-SP. PPRD is part of the controlled environment model and therefore operates through isolated AWS account boundaries rather than through the shared DIT account pool.
 
 Responsibilities / Role:
 It is responsible for final readiness checks, controlled pre-release validation, and confirmation that changes can safely progress toward production.
 
 Relationships:
-It connects to DEV, QA where applicable, PRD, and all architecture components.
+It connects to DEV, QA where applicable, PRD, Environment Account Isolation, Region Scope, and all architecture components.
 
 Constraints (if applicable):
-PPRD is not an exploratory environment. It should be treated as a controlled stage for near-production validation.
+PPRD is not an exploratory environment. It should be treated as a controlled stage for near-production validation and isolated AWS account scope.
 
 ## PRD
 
@@ -500,13 +653,13 @@ Definition:
 The production environment where platform capabilities operate for real governed use and downstream consumption.
 
 Context in This Repository:
-PRD is the final environment in the model and applies to all architecture components.
+PRD is the final environment in the model and applies to all architecture components. PRD is part of the controlled environment model and therefore operates through isolated AWS account boundaries rather than through the shared DIT account pool.
 
 Responsibilities / Role:
 It is responsible for delivering stable, governed, and supportable platform behavior for operational use.
 
 Relationships:
-It connects to PPRD, Observability, Data Distribution, Data Product, and all architecture components.
+It connects to PPRD, Observability, Data Distribution, Data Product, Environment Account Isolation, Region Scope, and all architecture components.
 
 Constraints (if applicable):
-PRD changes must reflect the repository’s environment discipline and should only follow controlled progression from earlier environments.
+PRD changes must reflect the repository's environment discipline, isolated AWS account boundaries, and controlled progression from earlier environments.

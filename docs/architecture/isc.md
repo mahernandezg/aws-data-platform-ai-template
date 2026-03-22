@@ -6,6 +6,8 @@ ISC is the architecture component responsible for Ingestion into the Data Platfo
 
 It exists to bring data into the platform in a controlled, observable, and standardized manner before that data is used by downstream processing or governed distribution capabilities. In the Hub-and-Spoke Architecture used by this repository, ISC provides the managed entry point for upstream data sources and establishes the initial platform boundary for technical control, Metadata capture, and Ingestion discipline.
 
+Within the repository's Medallion Data Architecture, ISC owns the Landing Zone only. It is responsible for raw data Ingestion and controlled handoff into downstream Bronze standardization, but it does not own Bronze, Silver, or Gold processing.
+
 ## Responsibilities
 
 - Acquire data from upstream sources through approved Ingestion patterns.
@@ -16,6 +18,7 @@ It exists to bring data into the platform in a controlled, observable, and stand
 - Support early Data Quality controls appropriate to platform entry.
 - Preserve traceability needed for downstream Data Lineage.
 - Handoff ingested data into governed downstream platform flows.
+- Own the Landing Zone as the raw-entry layer of the Data Platform.
 
 ## Scope and Boundaries
 
@@ -27,6 +30,7 @@ ISC includes:
 - ingestion-level validation and technical quality checks
 - Metadata capture associated with data entering the platform
 - operational handling of source-aligned Ingestion events
+- Landing Zone responsibilities for raw data entry and handoff into Bronze processing
 
 ISC does not include:
 
@@ -36,6 +40,7 @@ ISC does not include:
 - shared Control Plane ownership owned by DCS
 - broad consumer-facing access patterns
 - enterprise-wide semantic modeling responsibilities
+- Bronze, Silver, or Gold processing ownership
 
 ## Inbound Interactions
 
@@ -75,6 +80,7 @@ Within the Data Plane, ISC is responsible for:
 - performing controlled platform entry and handoff actions
 - preserving traceability of how data first enters the Data Platform
 - applying ingestion-level Data Quality checks needed before downstream use
+- maintaining Landing Zone discipline without expanding into Bronze, Silver, or Gold processing ownership
 
 ### Control Plane Responsibilities
 
@@ -122,7 +128,7 @@ Typical AWS services aligned to ISC include:
 - Amazon MSK
 - Apache Iceberg
 
-These services are indicative of common AWS-native Ingestion patterns and should be interpreted at architecture level rather than as a mandatory implementation list.
+These services are indicative of common AWS-native Ingestion patterns and should be interpreted at architecture level rather than as a mandatory implementation list. In Medallion terms, ISC supports Landing Zone entry and handoff. From Bronze onward, data remains aligned to the Apache Iceberg standard.
 
 ## Governance and Security Considerations
 
@@ -157,6 +163,7 @@ ISC is not:
 - the governed Data Distribution layer
 - the primary owner of downstream consumer access patterns
 - a generic place to place any data movement activity without regard to architecture boundaries
+- the owner of Bronze, Silver, or Gold Transformation responsibilities
 
 ISC must remain the controlled Ingestion boundary of the Data Platform and should not absorb responsibilities that belong to DP-EH, DP-SP, DCS, or DDC.
 

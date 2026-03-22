@@ -1,0 +1,55 @@
+// License: Apache 2.0
+// Author: Manuel Hernandez Giuliani
+// Date Created: 2026-03-22
+// Date Modified: 2026-03-22
+// Purpose: ISC Step Functions starter that orchestrates one ingestion flow into an Apache Iceberg-standardized downstream handoff.
+// Architecture component: ISC - Ingestion Service Center
+// Environment applicability: DIT, DEV, QA, PPRD, PRD
+// Notes:
+// - This JSONC starter is near-runnable. Remove comments or render it to JSON before deployment.
+// - This workflow coordinates ingestion and quality gates. It does not move processing ownership into DDC.
+
+{
+  "Comment": "ISC ingestion orchestration starter with quality gate and Iceberg handoff assumptions.",
+  "StartAt": "ValidateInput",
+  "States": {
+    "ValidateInput": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.source_path",
+          "IsPresent": true,
+          "Next": "RunGlueIngestionJob"
+        }
+      ],
+      "Default": "InvalidRequest"
+    },
+    "RunGlueIngestionJob": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "${glue_job_name}",
+        "Arguments": {
+          "--source_path.$": "$.source_path",
+          "--target_database": "${target_database}",
+          "--target_table": "${target_table}",
+          "--warehouse_path": "${warehouse_path}"
+        }
+      },
+      "Next": "RecordIngestionResult"
+    },
+    "RecordIngestionResult": {
+      "Type": "Pass",
+      "Parameters": {
+        "status": "completed",
+        "message": "ISC ingestion completed and data was standardized for Iceberg-managed downstream use."
+      },
+      "End": true
+    },
+    "InvalidRequest": {
+      "Type": "Fail",
+      "Error": "InvalidInput",
+      "Cause": "The required source_path field was not provided."
+    }
+  }
+}

@@ -66,6 +66,21 @@ This model is intended to support both centralized and domain-aligned data platf
 
 ---
 
+## Medallion Layer Model
+
+The repository also enforces Medallion Data Architecture naming and layer responsibility across the platform.
+
+The required mapping is:
+
+- ISC owns the Landing Zone and raw data Ingestion only
+- DP-EH owns enterprise Bronze, Silver, and Gold processing
+- DP-SP owns spoke-aligned Bronze and Silver processing, plus Gold only for domain-specific Data Products or domain-specific enhancements of DP-EH Gold outputs
+- DDC exposes Gold Data Products to consumers
+
+This layer model is mandatory, not optional. It must remain aligned with Apache Iceberg as the standard Open Table Format, must preserve Hub versus Spoke boundaries, and must not turn DDC into a processing layer. AI-oriented access to Bronze, Silver, or Gold is allowed only as a controlled exception to the default consumer-exposure pattern.
+
+---
+
 ## Environment Model
 
 The repository uses the following environment model:
@@ -95,6 +110,53 @@ DP-SP uses:
 
 This distinction reflects the repository rule that DP-SP does not use a standalone QA stage in the same way as shared platform services.
 
+### AWS Account Model
+
+The repository also enforces a multi-account architecture model.
+
+Controlled environments use isolated AWS account boundaries rather than one shared account across the full platform lifecycle.
+
+The explicit component-aligned account groups are:
+
+- ISC-DEV, ISC-QA, ISC-PPRD, ISC-PRD
+- DP-EH-DEV, DP-EH-QA, DP-EH-PPRD, DP-EH-PRD
+- DP-SP-DEV, DP-SP-PPRD, DP-SP-PRD
+- DDC-DEV, DDC-QA, DDC-PPRD, DDC-PRD
+
+This means:
+
+- ISC does not have DIT
+- DP-EH does not have DIT
+- DDC does not have DIT
+- DP-SP does not have DIT
+- DP-SP does not have QA
+
+DIT does not use component-owned account groups. It is shared experimentation capacity only and consists of:
+
+- DIT-1
+- DIT-2
+- DIT-3
+- DIT-4
+
+DCS remains the shared control and governance layer across these isolated account boundaries rather than being described as a separate component-owned environment account family.
+
+### Multi-Region Model
+
+Multi-region is part of the architecture design, not a future aspiration.
+
+The controlled platform operates in:
+
+- us-east-1
+- eu-west-1
+
+ISC, DP-EH, DP-SP, and DDC participate in both regions for the controlled platform model.
+
+The four shared DIT accounts exist only in:
+
+- eu-west-1
+
+DIT therefore supports experimentation only in eu-west-1. It is not a multi-region shared sandbox model in the same way as DEV, QA, PPRD, and PRD.
+
 ---
 
 ## Mandatory Platform Standards
@@ -110,6 +172,7 @@ The following standards are mandatory across the repository:
 
 - Apache Iceberg is the standard Open Table Format.
 - From ISC onward, data must be landed and standardized in Apache Iceberg.
+- Medallion layers from Bronze through Gold must remain aligned with the Apache Iceberg standard.
 
 ### Redshift
 
@@ -126,6 +189,8 @@ The following standards are mandatory across the repository:
 ### Consumption
 
 - DDC supports both Redshift-based serving and S3 plus Apache Iceberg plus Athena serverless consumption patterns.
+- In the default platform pattern, DDC exposes Gold Data Products to consumers.
+- AI workloads may access Bronze, Silver, or Gold only as a controlled exception.
 
 ### SageMaker Unified Studio
 
@@ -146,7 +211,8 @@ The repository currently defines:
 - role definitions in `docs/roles/*.md`
 - AWS service mapping in `docs/aws-toolkit/service-mapping.md`
 - AI repository instructions in `.github/copilot-instructions.md`
-- prompt and instruction scaffolding in `.github/prompts/*` and `.github/instructions/*`
+- reusable prompts in `.github/prompts/*`
+- reusable instruction files in `.github/instructions/*`
 
 ---
 
@@ -298,6 +364,63 @@ The current objective is to establish:
 - AI-ready repository instructions and prompts
 
 Implementation templates, examples, and downstream engineering accelerators can be added later without weakening the architecture system defined here.
+
+---
+
+## Using Codex and Copilot in This Repository
+
+A new engineer should be able to open this repository in VS Code and know where the architecture rules live, which AI guidance files to use, and how to start the most common task types.
+
+### Read this context first
+
+Start every meaningful task by reading:
+
+1. `README.md`
+2. `.github/copilot-instructions.md`
+3. `docs/architecture-glossary.md`
+4. `docs/architecture/hub-spoke-overview.md`
+5. the relevant files in `docs/architecture/`, `docs/environments/`, `docs/roles/`, or `docs/aws-toolkit/`
+
+### Repository AI guidance files
+
+Use these files as the default guidance layer for Copilot and Codex:
+
+- `.github/copilot-instructions.md` for repository-wide rules
+- `.github/instructions/architecture.instructions.md` for architecture and design work
+- `.github/instructions/aws.instructions.md` for AWS service and service-mapping work
+- `.github/instructions/terraform.instructions.md` for Terraform work
+- `.github/instructions/pyspark.instructions.md` for PySpark work
+- `.github/instructions/dbt.instructions.md` for dbt work
+- `.github/instructions/qa.instructions.md` for QA and validation work
+
+### Reusable prompt entry points
+
+Use these prompt files to start the main artifact families covered in this phase:
+
+- `.github/prompts/design-hub-spoke.prompt.md` for architecture design and architecture-aligned documentation
+- `.github/prompts/create-glue-job.prompt.md` for AWS Glue job design or implementation artifacts
+- `.github/prompts/create-dbt-model.prompt.md` for dbt models and dbt-oriented transformation guidance
+- `.github/prompts/create-stepfunction.prompt.md` for Step Functions workflow design or implementation artifacts
+- `.github/prompts/review-terraform.prompt.md` for Terraform review work
+- `.github/prompts/qa-data-pipeline.prompt.md` for QA review, validation planning, and data-pipeline quality assessment
+
+### Practical working rule
+
+When using Copilot or Codex in this repository:
+
+- identify the architecture component first: `ISC`, `DP-EH`, `DP-SP`, `DCS`, or `DDC`
+- identify the environment scope when relevant: `DIT`, `DEV`, `QA`, `PPRD`, or `PRD`
+- state the mandatory standards when they matter: IAM Roles only, Apache Iceberg from ISC onward, Redshift only for serving final Data Products, and Medallion layer ownership from Landing Zone through Gold
+- use the matching prompt for the task family
+- rely on the matching instruction file to keep the output consistent and opinionated
+
+### Phase completion signal
+
+For this phase, the repository now provides:
+
+- one reusable prompt for each major artifact family in scope
+- one instruction file for each major implementation family in scope
+- a clear VS Code onboarding path for using Codex and Copilot consistently in the repository
 
 ---
 

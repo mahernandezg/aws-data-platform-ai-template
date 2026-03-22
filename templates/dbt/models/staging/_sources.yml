@@ -1,0 +1,15 @@
+# License: Apache 2.0
+# Author: Manuel Hernandez Giuliani
+# Date Created: 2026-03-22
+# Date Modified: 2026-03-22
+# Purpose: Minimal dbt source definition starter used by the staging model convention in this repository.
+# Architecture component: DP-EH or DP-SP
+
+version: 2
+
+sources:
+  - name: landing
+    description: Replace this source definition with the actual Iceberg-managed landing or shared source relation.
+    tables:
+      - name: source_events
+        description: Placeholder source table for the dbt starter.

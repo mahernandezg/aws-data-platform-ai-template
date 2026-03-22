@@ -27,10 +27,12 @@ Mandatory rules:
 - use Apache Iceberg as the standard Open Table Format
 - assume IAM Roles only
 - do not use IAM Users
+- identify whether the model belongs to Bronze, Silver, or Gold
 - do not position Amazon Redshift as the large-scale processing engine of the platform
 - if Redshift is mentioned, treat it as a serving layer for final Data Products, not as the default transformation platform
 - keep DDC out of primary processing design
 - preserve clear separation between shared enterprise logic and spoke-specific logic
+- do not blur enterprise Gold ownership in DP-EH with domain-specific Gold ownership in DP-SP
 
 When generating a dbt artifact:
 
@@ -50,5 +52,6 @@ If code is requested:
 Do not:
 
 - create ambiguous models that mix DP-EH and DP-SP ownership
+- create ambiguous models that blur Bronze, Silver, or Gold intent
 - default to non-Iceberg storage patterns
 - treat Redshift as the platform's batch-processing engine

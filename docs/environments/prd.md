@@ -40,6 +40,26 @@ Why all components use PRD:
 
 PRD is therefore the operational convergence point for both hub-oriented and spoke-oriented responsibilities in the Data Platform.
 
+## Account and Region Model
+
+PRD is a controlled environment and therefore uses isolated AWS account boundaries.
+
+The explicit component-aligned PRD account groups are:
+
+- ISC-PRD
+- DP-EH-PRD
+- DP-SP-PRD
+- DDC-PRD
+
+DCS remains the shared control and governance layer across those account boundaries rather than being defined here as a separate component-owned PRD account family.
+
+Region scope for PRD is:
+
+- us-east-1
+- eu-west-1
+
+PRD is therefore a controlled multi-region operational environment.
+
 ## Types of Workloads
 
 Workloads expected in PRD are stable operational workloads.
@@ -88,6 +108,7 @@ PRD requires the strongest governance and control level in the environment model
 Expected controls in PRD include:
 
 - strict adherence to architecture component responsibilities
+- strict adherence to Medallion layer ownership from Landing Zone through Gold exposure
 - controlled promotion from earlier environments, especially PPRD
 - strong Data Governance and Data Quality enforcement
 - explicit Metadata and Data Lineage management
@@ -160,9 +181,11 @@ PRD is not:
 - a production-like simulation stage
 - a place to introduce unresolved architectural or operational ambiguity
 - an environment where changes can be treated as low-risk
+- an environment where Gold exposure or lower-layer access patterns can drift outside the defined Medallion rules
+- a shared experimentation account pool
 
 PRD must remain the stable governed operational environment of the Data Platform and should only host capabilities that are ready for real use.
 
 ## Summary
 
-PRD is the production environment of the Data Platform. It exists to operate stable, governed, and supportable workloads across ISC, DP-EH, DP-SP, DCS, and DDC so the platform can deliver real operational value, trusted Data Products, and controlled Data Distribution to downstream consumers.
+PRD is the production environment of the Data Platform. It exists to operate stable, governed, and supportable workloads across isolated multi-region account boundaries for ISC, DP-EH, DP-SP, DCS, and DDC so the platform can deliver real operational value, trusted Data Products, and controlled Data Distribution to downstream consumers.

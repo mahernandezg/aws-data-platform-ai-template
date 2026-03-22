@@ -22,6 +22,14 @@ Service selection must follow repository architecture boundaries, not product fa
 - From ISC onward, data must be landed and standardized in Apache Iceberg.
 - Do not present unmanaged Hive-style table patterns as the default platform choice.
 
+### Medallion
+
+- ISC owns the Landing Zone only.
+- DP-EH owns enterprise Bronze, Silver, and Gold processing.
+- DP-SP owns spoke Bronze and Silver processing, plus constrained Gold ownership for domain-specific outputs or enhancements of DP-EH Gold assets.
+- DDC exposes Gold Data Products to consumers by default.
+- AI-oriented access to Bronze, Silver, or Gold is allowed only as a controlled exception.
+
 ### Redshift
 
 - Amazon Redshift is used only to store and serve final Data Products.
@@ -50,10 +58,10 @@ Service selection must follow repository architecture boundaries, not product fa
 Use the following high-level alignment:
 
 - ISC: ingestion services, orchestration services, S3, Iceberg, Metadata-supporting services
-- DP-EH: large-scale processing services, orchestration, S3, Iceberg, optional producer Redshift serving structures
-- DP-SP: domain-aligned processing services, optional lighter visual tools, S3, Iceberg, optional producer Redshift serving structures
+- DP-EH: large-scale processing services for enterprise Bronze, Silver, and Gold, orchestration, S3, Iceberg, optional producer Redshift serving structures
+- DP-SP: domain-aligned processing services for spoke Bronze, Silver, and constrained Gold, optional lighter visual tools, S3, Iceberg, optional producer Redshift serving structures
 - DCS: IAM, Lake Formation, Secrets Manager, CloudWatch, CloudTrail, Dynatrace, EventBridge, Terraform-aligned control services
-- DDC: S3, Iceberg, Athena, Redshift consumer clusters, governed consumer access services
+- DDC: S3, Iceberg, Athena, Redshift consumer clusters, and governed Gold exposure to consumers
 
 ## Service-Selection Guidance
 
@@ -74,3 +82,4 @@ Do not:
 - treat DDC as a compute-heavy processing layer
 - duplicate DCS control capabilities inside every component without explanation
 - recommend service choices that blur hub and spoke boundaries
+- recommend service choices that blur Landing Zone, Bronze, Silver, Gold, or DDC exposure boundaries
